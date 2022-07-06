@@ -9,6 +9,7 @@
             [quo2.screens.status-tags :as status-tags]
             [quo2.screens.counter :as counter]
             [quo2.screens.segmented :as segmented]
+            [quo2.screens.top-nav :as top-nav]
             [quo.core :as quo]))
 
 (def screens [{:name      :quo2-texts
@@ -28,7 +29,12 @@
                :component segmented/preview-segmented}
               {:name      :quo2-counter
                :insets    {:top false}
-               :component counter/preview-counter}])
+               :component counter/preview-counter}
+              {:name      :quo2-preview-top-nav
+               :insets    {:top false}
+               :component top-nav/preview-top-nav}])
+
+
 
 (defn theme-switcher []
   [rn/view {:style {:flex-direction   :row
