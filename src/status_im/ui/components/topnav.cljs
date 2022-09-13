@@ -29,6 +29,24 @@
     :accessibility-label :contact-qr-code-button}
    :main-icons2/qr-code])
 
+(defn search []
+  [quo2.button/button
+   {:icon                true
+    :type                :grey
+    :size                32
+    :style               {:margin-left 12}
+    :accessibility-label :search-button}
+   :main-icons2/search])
+
+(defn close [{:keys [on-press]}]
+  [quo2.button/button
+   {:icon                true
+    :type                :grey
+    :size                32
+    :accessibility-label :search-button
+    :on-press            on-press}
+   :main-icons2/close])
+
 (defn notifications-button []
   (let [notif-count (<sub [:activity.center/notifications-count])]
     [:<>

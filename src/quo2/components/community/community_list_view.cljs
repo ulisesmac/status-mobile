@@ -47,8 +47,7 @@
                                                   :tokens       tokens}])]]]])
 
 (defn communities-membership-list-item [{:keys [id name status tokens locked] :as community}]
-  [react/view {:margin-bottom       12
-               :padding-horizontal  8}
+  [react/view {:margin-bottom       20}
    [react/touchable-highlight {:underlay-color      colors/primary-50-opa-5
                                :style               {:border-radius 12}
                                :on-press      (fn []
@@ -58,16 +57,21 @@
                                :on-long-press #(>evt [:bottom-sheet/show-sheet
                                                       {:content (fn []
                                                                   [community/community-actions community])}])}
-    [react/view {:flex               1
-                 :padding-vertical   8
-                 :padding-horizontal 12}
+    [react/view {:flex               1}
      [react/view {:flex-direction    :row
                   :border-radius     16
                   :align-items       :center}
-      [communities.icon/community-icon-redesign community 48]
-      [react/view {:margin-left   12
-                   :flex          1}
-       [community-view/community-title {:title  name}]]
+      [communities.icon/community-icon-redesign community 32]
+      [react/view {:flex              1
+                   :margin-left       12
+                   :justify-content   :center}
+       [text/text
+        {:accessibility-label :chat-name-text
+         :number-of-lines     1
+         :ellipsize-mode      :tail
+         :weight              :semi-bold
+         :size                :paragraph-1}
+        name]]
       (when (= status :gated)
         [react/view {:justify-content   :center
                      :margin-right      12}

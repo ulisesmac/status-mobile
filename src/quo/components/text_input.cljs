@@ -85,7 +85,7 @@
           :background-color (:ui-01 @colors/theme)}
          style))
 
-(defn text-input-style [multiline input-style monospace before after]
+(defn text-input-style [multiline input-style monospace before after new-ui?]
   (merge (if monospace
            typography/monospace
            typography/font-regular)
@@ -98,7 +98,9 @@
           :color               (:text-01 @colors/theme)
           :height              height}
          (when-not before
-           {:padding-left (:base spacing/spacing)})
+           (if new-ui?
+             {:padding-left 20}
+             {:padding-left (:base spacing/spacing)}))
          (when-not after
            {:padding-right (:base spacing/spacing)})
          (when multiline
@@ -148,7 +150,7 @@
     (fn [{:keys [label multiline error style input-style keyboard-type before after
                  cancel-label on-focus on-blur show-cancel accessibility-label
                  bottom-value secure-text-entry container-style get-ref on-cancel
-                 monospace auto-complete-type auto-correct]
+                 monospace auto-complete-type auto-correct new-ui?]
           :or  {cancel-label "Cancel"}
           :as  props}]
       {:pre [(check-spec ::text-input props)]}
@@ -205,7 +207,7 @@
            (when before
              [accessory-element before])
            [rn/text-input
-            (merge {:style                   (text-input-style multiline input-style monospace before after)
+            (merge {:style                   (text-input-style multiline input-style monospace before after new-ui?)
                     :ref                     (fn [r]
                                                (reset! ref r)
                                                (when get-ref (get-ref r)))

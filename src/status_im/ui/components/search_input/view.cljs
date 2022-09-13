@@ -8,8 +8,8 @@
 (defn search-input [{:keys [search-active?]}]
   (let [input-ref      (atom nil)
         search-active? (or search-active? (reagent/atom nil))]
-    (fn [{:keys [on-focus on-change on-blur on-cancel search-filter auto-focus]}]
-      [quo/text-input {:placeholder         (i18n/label :t/search)
+    (fn [{:keys [on-focus placeholder on-change on-blur on-cancel search-filter auto-focus before]}]
+      [quo/text-input {:placeholder         placeholder
                        :accessibility-label :search-input
                        :blur-on-submit      true
                        :multiline           false
@@ -20,20 +20,18 @@
                        :show-cancel         true
                        :auto-correct        false
                        :auto-capitalize     :none
-                       :container-style     {:border-radius 10
-                                             :border-width 1
-                                             :border-color (:ui-01  @colors/theme)
-                                             :background-color (quo2.colors/theme-colors quo2.colors/white quo2.colors/neutral-90)
+                       :container-style     {:background-color (quo2.colors/theme-colors quo2.colors/neutral-5 quo2.colors/neutral-90)
                                              :overflow :hidden}
                        :input-style         {:height         32
                                              :padding-top    2
                                              :padding-bottom 2
-                                             :background-color (quo2.colors/theme-colors quo2.colors/white quo2.colors/neutral-90)}
-                       :before              {:icon      :main-icons/search2
-                                             :style     {:padding-horizontal 8
-                                                         :background-color (quo2.colors/theme-colors quo2.colors/white quo2.colors/neutral-90)}
-                                             :on-press  #(some-> ^js @input-ref (.focus))
-                                             :icon-opts {:color (quo2.colors/theme-colors quo2.colors/neutral-50 quo2.colors/white)}}
+                                             :background-color (quo2.colors/theme-colors quo2.colors/neutral-5 quo2.colors/neutral-90)}
+                       :before              (when before
+                                              {:icon      :main-icons2/search
+                                               :style     {:padding-horizontal 8
+                                                           :background-color (quo2.colors/theme-colors quo2.colors/neutral-5 quo2.colors/neutral-90)}
+                                               :on-press  #(some-> ^js @input-ref (.focus))
+                                               :icon-opts {:color (quo2.colors/theme-colors quo2.colors/neutral-50 quo2.colors/white)}})
                        :on-focus            #(do
                                                (when on-focus
                                                  (on-focus search-filter))
@@ -46,7 +44,8 @@
                                               (let [^js native-event (.-nativeEvent ^js e)
                                                     text             (.-text native-event)]
                                                 (when on-change
-                                                  (on-change text))))}])))
+                                                  (on-change text))))
+                       :new-ui?              true}])))
 
 (defn search-input-old [{:keys [search-active?]}]
   (let [input-ref      (atom nil)

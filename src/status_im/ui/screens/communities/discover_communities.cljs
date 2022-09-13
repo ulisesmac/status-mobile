@@ -1,4 +1,4 @@
-(ns status-im.ui.screens.communities.communities-list-redesign
+(ns status-im.ui.screens.communities.discover-communities
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [status-im.i18n.i18n :as i18n]
@@ -12,13 +12,11 @@
             [quo2.foundations.colors :as quo2.colors]
             [quo.components.safe-area :as safe-area]
             [quo2.components.tabs.tabs :as quo2.tabs]
-            [status-im.ui.screens.chat.photos :as photos]
             [status-im.react-native.resources :as resources]
-            [status-im.multiaccounts.core :as multiaccounts]
             [status-im.ui.components.topbar :as topbar]
-            [status-im.ui.components.plus-button :as plus-button]
             [status-im.utils.handlers :refer [<sub  >evt]]
             [status-im.ui.components.topnav :as topnav]
+            [status-im.ui.components.search-input.view :as search-input]
             [quo2.components.community.community-card-view :as community-card]
             [quo2.components.community.community-list-view :as community-list]
             [quo2.components.icon :as icons]))
@@ -26,6 +24,7 @@
 (def selected-tab (reagent/atom :all))
 (def view-type   (reagent/atom  :card-view))
 (def sort-list-by (reagent/atom :name))
+(defonce search-active? (reagent/atom false))
 
 (def mock-community-item-data ;; TODO: remove once communities are loaded with this data.
   {:data {:community-color "#0052FF"
@@ -45,13 +44,12 @@
                     :tag-label (i18n/label :t/podcasts)
                     :resource  (resources/get-image :podcasts)}]}})
 
-(defn plus-button []
-  (let [logging-in? (<sub [:multiaccounts/login])]
-    [plus-button/plus-button
-     {:on-press (when-not logging-in?
-                  #(re-frame/dispatch [:bottom-sheet/show-sheet :add-new {}]))
-      :loading logging-in?
-      :accessibility-label :new-community-button}]))
+(defn search-input-wrapper []
+  [rn/view {:padding-vertical   10
+               :height             52}
+   [search-input/search-input
+    {:search-active? search-active?
+     :placeholder    (i18n/label :t/search-discover-communities)}]])
 
 (defn render-other-fn [community-item]
   (let [item (merge community-item
@@ -70,14 +68,14 @@
 (defn get-item-layout-js [_ index]
   #js {:length 64 :offset (* 64 index) :index index})
 
-(defn community-segments []
+(defn discover-community-segments []
   [rn/view {:flex               1
-            :margin-bottom      8
-            :padding-horizontal 20}
+               :margin-bottom      8
+               :padding-horizontal 20}
    [rn/view {:flex-direction :row
-             :padding-top    20
-             :padding-bottom 8
-             :height         60}
+                :padding-top    20
+                :padding-bottom 8
+                :height         60}
     [rn/view {:flex 1}
      [quo2.tabs/tabs {:size           32
                       :on-change      #(reset! selected-tab %)
@@ -127,7 +125,7 @@
       :data                              sorted-communities
       :render-fn                         render-other-fn}]))
 
-(defn community-segments-view [communities]
+(defn segments-community-lists [communities]
   (let [tab @selected-tab
         sort-list-by @sort-list-by]
     (case tab
@@ -169,19 +167,13 @@
 
 (defn title-column []
   [rn/view
-   {:flex-direction     :row
-    :align-items        :center
-    :height             56
+   {:height             56
     :padding-vertical   12
     :padding-horizontal 20}
-   [rn/view
-    {:flex           1}
-    [quo2.text/text {:accessibility-label :communities-screen-title
-                     :margin-right        6
-                     :weight              :semi-bold
-                     :size                :heading-1}
-     (i18n/label :t/communities)]]
-   [plus-button]])
+   [quo2.text/text {:accessibility-label :communities-screen-title
+                    :weight              :semi-bold
+                    :size                :heading-1}
+    (i18n/label :t/discover-communities)]])
 
 (defn community-filter-tags []
   (let [filters [{:id 1 :tag-label (i18n/label :t/music) :resource (resources/get-image :music)}
@@ -189,12 +181,11 @@
                  {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}
                  {:id 4 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]]
     [rn/scroll-view {:horizontal                        true
-                     :height                            48
-                     :shows-horizontal-scroll-indicator false
-                     :scroll-event-throttle             64
-                     :padding-top                       4
-                     :padding-bottom                    12
-                     :padding-horizontal                20}
+                        :height                            48
+                        :shows-horizontal-scroll-indicator false
+                        :scroll-event-throttle             64
+                        :padding-top                       16
+                        :padding-horizontal                20}
      [tags/tags {:data          filters
                  :labelled      true
                  :type          :emoji
@@ -202,38 +193,37 @@
                                   quo2.colors/neutral-50
                                   quo2.colors/neutral-40)}]]))
 
-(defn communities-list []
-  (let [multiaccount (<sub [:multiaccount])
-        communities (<sub [:communities/communities])
+(defn discover-communities []
+  (let [communities (<sub [:communities/communities])
         featured-communities (<sub [:communities/featured-communities])]
-
-    [safe-area/consumer
-     (fn [insets]
-       [rn/view {:style {:flex             1
-                         :padding-top      (:top insets)
-                         :background-color (quo2.colors/theme-colors
-                                            quo2.colors/neutral-5
-                                            quo2.colors/neutral-95)}}
-        [topbar/topbar
-         {:navigation      :none
-          :left-component  [rn/view {:margin-left 16}
-                            [photos/photo (multiaccounts/displayed-photo multiaccount)
-                             {:size 32}]]
-          :right-component [rn/view {:flex-direction :row
-                                     :margin-right 16}
-                            [topnav/qr-scanner]
-                            [topnav/qr-code]
-                            [topnav/notifications-button]]
-          :new-ui?         true
-          :border-bottom   false}]
-        [title-column]
-        [rn/scroll-view
-         [community-filter-tags]
-         [featured-communities-section featured-communities]
-         (when communities
-           [:<>
-            [rn/view {:margin-vertical    4
+    [rn/view {:flex             1}
+     [topbar/topbar
+      {:navigation      :none
+       :left-component  [rn/view {:margin-left 16}
+                         [topnav/close
+                          {:on-press            #(>evt [:navigate-back])}]]
+       :new-ui?         true
+       :border-bottom   false}]
+     [title-column]
+     [search-input-wrapper]
+     [rn/scroll-view
+      [separator/separator]
+      [community-filter-tags]
+      [featured-communities-section featured-communities]
+      (when communities
+        [:<>
+         [rn/view {:margin-vertical    4
                       :padding-horizontal 20}
-             [separator/separator]]
-            [community-segments]])
-         [community-segments-view communities]]])]))
+          [separator/separator]]
+         [discover-community-segments]])
+      [segments-community-lists communities]]]))
+
+(defn communities []
+  (fn []
+    [safe-area/consumer
+     (fn []
+       [rn/view {:style {:flex             1
+                            :background-color (quo2.colors/theme-colors
+                                               quo2.colors/neutral-5
+                                               quo2.colors/neutral-95)}}
+        [discover-communities]])]))

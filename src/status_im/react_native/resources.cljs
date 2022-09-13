@@ -52,7 +52,16 @@
    :community-cover    (js/require "../resources/images/ui/community-cover.png")
    :lifestyle          (js/require "../resources/images/ui/lifestyle.png")
    :music              (js/require "../resources/images/ui/music.png")
-   :podcasts           (js/require "../resources/images/ui/podcasts.png")})
+   :podcasts           (js/require "../resources/images/ui/podcasts.png")
+   :placeholder-image1 (js/require "../resources/images/ui/placeholder-image1.png")
+   :placeholder-image2 (js/require "../resources/images/ui/placeholder-image2.png")
+   :placeholder-image3 (js/require "../resources/images/ui/placeholder-image3.png")
+   :placeholder-image4 (js/require "../resources/images/ui/placeholder-image4.png")
+   :placeholder-image5 (js/require "../resources/images/ui/placeholder-image5.png")
+   :placeholder-image6 (js/require "../resources/images/ui/placeholder-image6.png")
+   :placeholder-image7 (js/require "../resources/images/ui/placeholder-image7.png")
+   :placeholder-image8 (js/require "../resources/images/ui/placeholder-image8.png")
+   :placeholder-image9 (js/require "../resources/images/ui/placeholder-image9.png")})
 
 (def mock-images
   {:photo1               (js/require "../resources/images/mock/photo1.png")

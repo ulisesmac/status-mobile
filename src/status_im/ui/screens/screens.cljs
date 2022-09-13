@@ -20,6 +20,7 @@
             [status-im.ui.screens.bug-report :as bug-report]
             [status-im.ui.screens.chat.pinned-messages :as pin-messages]
             [status-im.ui.screens.chat.views :as chat]
+            [status-im.ui.screens.communities.discover-communities :as discover-communities]
             [status-im.ui.screens.communities.community-overview-redesign :as community-overview]
             [status-im.ui.screens.communities.channel-details :as communities.channel-details]
             [status-im.ui.screens.communities.community :as community]
@@ -264,6 +265,10 @@
             ;;TODO custom
             :options   {:topBar {:visible false}}
             :component community/community}
+           {:name      :discover-communities
+            ;;TODO custom
+            :options   {:topBar {:visible false}}
+            :component discover-communities/communities}
            {:name      :community-management
             :insets    {:top false}
             ;;TODO animated-header
