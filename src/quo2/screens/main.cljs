@@ -45,6 +45,8 @@
             [quo2.screens.tags.status-tags :as status-tags]
             [quo2.screens.tags.token-tag :as token-tag]
             [quo2.screens.wallet.token-overview :as token-overview]
+            [quo2.screens.share.qr-code :as qr-code]
+            [quo2.screens.info.lowest-price :as lowest-price]
             [quo2.screens.wallet.network-breakdown :as network-breakdown]
             [quo2.screens.wallet.network-amount :as network-amount]
             [quo2.screens.navigation.page-nav :as page-nav]
@@ -177,7 +179,12 @@
              :component network-breakdown/preview-network-breakdown}
             {:name      :network-amount
              :insets    {:top false}
-             :component network-amount/preview}]})
+             :component network-amount/preview}]
+   :share [{:name :share
+            :insets {:top false}
+            :component qr-code/preview-this}]
+
+   })
 
 (def screens (flatten (map val screens-categories)))
 
