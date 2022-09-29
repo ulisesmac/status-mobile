@@ -3,6 +3,8 @@
    [quo2.components.community.community-view :as community-view]
    [quo2.components.markdown.text :as text]
    [quo2.foundations.colors :as colors]
+   [quo2.components.counter.counter :as counter]
+   [quo2.components.icon :as icons]
    [status-im.communities.core :as communities]
    [status-im.utils.handlers :refer [>evt]]
    [status-im.ui.components.react :as react]
@@ -10,7 +12,8 @@
    [status-im.ui.screens.communities.community :as community]
    [status-im.ui.screens.communities.icon :as communities.icon]))
 
-(defn communities-list-view-item [{:keys [id name locked status tokens background-color] :as community}]
+(defn communities-list-view-item [{:keys [id name locked status tokens background-color
+                                          unread-messages mentions-counts muted] :as community}]
   [react/view {:style (merge (styles/community-card 16)
                              {:margin-bottom    12
                               :margin-horizontal 20})}
@@ -44,7 +47,26 @@
       (when (= status :gated)
         [community-view/permission-tag-container {:locked       locked
                                                   :status       status
-                                                  :tokens       tokens}])]]]])
+                                                  :tokens       tokens}])
+      (when unread-messages
+        [icons/icon  :main-icons2/muted {:container-style {:align-items     :center
+                                                           :justify-content :center}
+                                         :resize-mode      :center
+                                         :size             16
+                                         :color            (colors/theme-colors
+                                                            colors/neutral-50
+                                                            colors/neutral-40)}])
+      (when mentions-counts
+        [counter/counter {:type :grey
+                          :value mentions-counts}])
+      (when muted
+        [icons/icon  :main-icons2/muted {:container-style {:align-items     :center
+                                        :justify-content :center}
+                      :resize-mode      :center
+                      :size             16
+                      :color            (colors/theme-colors
+                                         colors/neutral-50
+                                         colors/neutral-40)}])]]]])
 
 (defn communities-membership-list-item [{:keys [id name status tokens locked] :as community}]
   [react/view {:margin-bottom       20}

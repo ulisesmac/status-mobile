@@ -61,7 +61,12 @@
    :placeholder-image6 (js/require "../resources/images/ui/placeholder-image6.png")
    :placeholder-image7 (js/require "../resources/images/ui/placeholder-image7.png")
    :placeholder-image8 (js/require "../resources/images/ui/placeholder-image8.png")
-   :placeholder-image9 (js/require "../resources/images/ui/placeholder-image9.png")})
+   :placeholder-image9 (js/require "../resources/images/ui/placeholder-image9.png")
+   :placeholder-image10 (js/require "../resources/images/ui/placeholder-image10.png")
+   :placeholder-image11 (js/require "../resources/images/ui/placeholder-image11.png")
+   :placeholder-image12 (js/require "../resources/images/ui/placeholder-image12.png")
+   :placeholder-image13 (js/require "../resources/images/ui/placeholder-image13.png")
+   :placeholder-image14 (js/require "../resources/images/ui/placeholder-image14.png")})
 
 (def mock-images
   {:photo1               (js/require "../resources/images/mock/photo1.png")

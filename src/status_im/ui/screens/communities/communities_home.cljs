@@ -90,10 +90,10 @@
      (i18n/label :t/communities)]]
    [plus-button]])
 
-(defn discover-card [joined?]
+(defn discover-card [joined]
   [react/touchable-without-feedback
-   {:on-press           #(>evt [:navigate-to :discover-communities])}
-   [discover-card/discover-card {:joined?     joined?
+   {:on-press           #(>evt [:navigate-to  :discover-communities])}
+   [discover-card/discover-card {:joined      joined
                                  :title       (i18n/label :t/discover)
                                  :description (i18n/label :t/whats-trending)}]])
 

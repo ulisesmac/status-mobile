@@ -1,11 +1,11 @@
-(ns quo2.screens.community.community-card-view
+(ns quo2.screens.community.community-list-view
   (:require [quo.react-native :as rn]
             [quo.previews.preview :as preview]
             [reagent.core :as reagent]
             [status-im.constants :as constants]
             [quo.design-system.colors :as quo.colors]
             [quo2.foundations.colors :as colors]
-            [quo2.components.community.community-card-view :as community-card-view]
+            [quo2.components.community.community-list-view :as community-list-view]
             [status-im.i18n.i18n :as i18n]
             [status-im.react-native.resources :as resources]))
 
@@ -24,16 +24,22 @@
                     {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
                     {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]})
 
-(def descriptor [{:label   "Community card views"
+(def descriptor [{:label   "Community list view"
                   :key     :view-style
                   :type    :select
                   :options [{:key   :gated
-                             :value "gated"} 
-                            {:key   :open
-                             :value "open"}]}
-                 {:label "locked:"
-                  :key   :locked
-                  :type  :boolean}])
+                             :value "gated"}
+                            {:key   :gated
+                             :value "open"}
+                            {:key   :gated
+                             :value "muted"}
+                            {:key   :gated
+                             :value "mentions"}
+                             {:key   :gated
+                              :value "unread-messages"}]}
+                  {:label "locked:"
+                   :key   :locked
+                   :type  :boolean}])
 
 (defn cool-preview []
   (let [state (reagent/atom {:view-style :gated})]
@@ -45,9 +51,9 @@
          [preview/customizer state descriptor]]
         [rn/view {:padding-vertical 60
                   :justify-content  :center}
-         [community-card-view/community-card-view-item community-data]]]])))
+         [community-list-view/communities-list-view-item community-data]]]])))
 
-(defn preview-community-card []
+(defn preview-community-list-view []
   [rn/view {:background-color (colors/theme-colors colors/neutral-5
                                                    colors/neutral-95)
             :flex             1}
