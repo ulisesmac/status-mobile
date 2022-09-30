@@ -12,7 +12,7 @@
    [status-im.ui.screens.communities.community :as community]
    [status-im.ui.screens.communities.icon :as communities.icon]))
 
-(defn communities-list-view-item [{:keys [id name locked? status unread-mention-counts notifications
+(defn communities-list-view-item [{:keys [id name locked? status notifications
                                           tokens background-color] :as community}]
   [react/view {:style (merge (styles/community-card 16)
                              {:margin-bottom    12
@@ -61,7 +61,7 @@
                                                   colors/neutral-60)}}]
 
           (= notifications :unread-mentions-count)
-          [counter/counter {:type :default} unread-mention-counts]
+          [counter/counter {:type :default} 5]
 
           (= notifications :muted)
           [icons/icon  :main-icons2/muted {:container-style {:align-items     :center

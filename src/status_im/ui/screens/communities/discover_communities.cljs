@@ -68,6 +68,42 @@
 (defn get-item-layout-js [_ index]
   #js {:length 64 :offset (* 64 index) :index index})
 
+(defn title-and-search []
+  [rn/view {:style {:border-bottom-width  1
+                       :border-bottom-color  (colors/theme-colors
+                                              colors/neutral-10
+                                              colors/neutral-80)}}
+   [rn/view
+    {:height             56
+     :padding-vertical   12
+     :padding-horizontal 20}
+    [quo2.text/text {:accessibility-label :communities-screen-title
+                     :weight              :semi-bold
+                     :size                :heading-1}
+     (i18n/label :t/discover-communities)]]
+   [search-input-wrapper]])
+
+(defn community-filter-tags []
+  (let [filters [{:id 1 :tag-label (i18n/label :t/music) :resource (resources/get-image :music)}
+                 {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
+                 {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}
+                 {:id 4 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]]
+    [rn/view {:height              64
+                 :align-items        :center
+                 :flex-direction      :row}
+     [rn/scroll-view {:horizontal                        true
+                         :height                            48
+                         :shows-horizontal-scroll-indicator false
+                         :scroll-event-throttle             64
+                         :padding-top                       16
+                         :padding-horizontal                20}
+      [tags/tags {:data          filters
+                  :labelled      true
+                  :type          :emoji
+                  :icon-color     (colors/theme-colors
+                                   colors/neutral-50
+                                   colors/neutral-40)}]]]))
+
 (defn discover-community-segments []
   [rn/view {:flex               1
                :margin-bottom      8
@@ -115,29 +151,6 @@
     :data                              communities
     :render-fn                         render-featured-fn}])
 
-(defn other-communities [communities sort-list-by]
-  (let [sorted-communities (sort-by sort-list-by communities)]
-    [list/flat-list
-     {:key-fn                            :id
-      :getItemLayout                     get-item-layout-js
-      :keyboard-should-persist-taps      :always
-      :shows-horizontal-scroll-indicator false
-      :data                              sorted-communities
-      :render-fn                         render-other-fn}]))
-
-(defn segments-community-lists [communities]
-  (let [tab @selected-tab
-        sort-list-by @sort-list-by]
-    (case tab
-      :all
-      [other-communities communities sort-list-by]
-
-      :open
-      [other-communities communities sort-list-by]
-
-      :gated
-      [other-communities communities sort-list-by])))
-
 (defn featured-communities-section [communities]
   (let [count (reagent/atom {:value (count communities) :type :grey})]
     [rn/view {:flex         1}
@@ -165,45 +178,43 @@
                   :padding-left   20}
       [featured-communities communities]]]))
 
-(defn title-and-search []
-  [rn/view {:style {:border-bottom-width  1
-                       :border-bottom-color  (colors/theme-colors
-                                              colors/neutral-10
-                                              colors/neutral-80)}}
-   [rn/view
-    {:height             56
-     :padding-vertical   12
-     :padding-horizontal 20}
-    [quo2.text/text {:accessibility-label :communities-screen-title
-                     :weight              :semi-bold
-                     :size                :heading-1}
-     (i18n/label :t/discover-communities)]]
-   [search-input-wrapper]])
+(defn other-communitites-header [communities]
+  [:<>
+   [community-filter-tags]
+   [featured-communities-section communities]
+   (when communities
+     [:<>
+      [rn/view {:margin-vertical    4
+                   :padding-horizontal 20}
+       [separator/separator]]
+      [discover-community-segments]])])
 
-(defn community-filter-tags []
-  (let [filters [{:id 1 :tag-label (i18n/label :t/music) :resource (resources/get-image :music)}
-                 {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
-                 {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}
-                 {:id 4 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]]
-    [rn/view {:height              64
-                 :align-items        :center
-                 :flex-direction      :row}
-     [rn/scroll-view {:horizontal                        true
-                         :height                            48
-                         :shows-horizontal-scroll-indicator false
-                         :scroll-event-throttle             64
-                         :padding-top                       16
-                         :padding-horizontal                20}
-      [tags/tags {:data          filters
-                  :labelled      true
-                  :type          :emoji
-                  :icon-color     (colors/theme-colors
-                                   colors/neutral-50
-                                   colors/neutral-40)}]]]))
+(defn other-communities [communities sort-list-by]
+  (let [sorted-communities (sort-by sort-list-by communities)]
+    [list/flat-list
+     {:key-fn                            :id
+      :getItemLayout                     get-item-layout-js
+      :keyboard-should-persist-taps      :always
+      :shows-horizontal-scroll-indicator false
+      :header                            (other-communitites-header communities)
+      :data                              sorted-communities
+      :render-fn                         render-other-fn}]))
+
+(defn segments-community-lists [communities]
+  (let [tab @selected-tab
+        sort-list-by @sort-list-by]
+    (case tab
+      :all
+      [other-communities communities sort-list-by]
+
+      :open
+      [other-communities communities sort-list-by]
+
+      :gated
+      [other-communities communities sort-list-by])))
 
 (defn discover-communities []
-  (let [communities (<sub [:communities/communities])
-        featured-communities (<sub [:communities/featured-communities])]
+  (let [communities (<sub [:communities/communities])]
     [rn/view {:flex             1}
      [quo2.button/button {:icon     true
                      :type     :grey
@@ -213,16 +224,7 @@
                      :on-press #(>evt [:navigate-back])}
       :close]
      [title-and-search]
-     [rn/scroll-view
-      [community-filter-tags]
-      [featured-communities-section featured-communities]
-      (when communities
-        [:<>
-         [rn/view {:margin-vertical    4
-                      :padding-horizontal 20}
-          [separator/separator]]
-         [discover-community-segments]])
-      [segments-community-lists communities]]]))
+     [segments-community-lists communities]]))
 
 (defn communities []
   (fn []
