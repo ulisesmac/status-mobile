@@ -6,14 +6,12 @@
             [quo2.foundations.colors :as colors]
             [quo2.components.community.discover-card :as discover-card]))
 
-(def descriptor [{:label   "Discover card"
-                  :type    :select}
-                 {:label "Joined:"
-                  :key   :joined
+(def descriptor [{:label "Joined:"
+                  :key   :joined?
                   :type  :boolean}])
 
 (defn cool-preview []
-  (let [state (reagent/atom {:joined :false})]
+  (let [state (reagent/atom {:joined? :false})]
     (fn []
       [rn/touchable-without-feedback {:on-press rn/dismiss-keyboard!}
        [rn/view {:padding-bottom 150}
@@ -22,7 +20,7 @@
          [preview/customizer state descriptor]]
         [rn/view {:padding-vertical 60
                   :justify-content  :center}
-         [discover-card/discover-card {:joined      (:joined @state)
+         [discover-card/discover-card {:joined?      (:joined? @state)
                                        :title       (i18n/label :t/discover)
                                        :description (i18n/label :t/whats-trending)}]]]])))
 

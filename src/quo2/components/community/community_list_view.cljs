@@ -12,8 +12,8 @@
    [status-im.ui.screens.communities.community :as community]
    [status-im.ui.screens.communities.icon :as communities.icon]))
 
-(defn communities-list-view-item [{:keys [id name locked status tokens background-color
-                                          unread-messages mentions-counts muted] :as community}]
+(defn communities-list-view-item [{:keys [id name locked? status unread-mention-counts notifications
+                                          tokens background-color] :as community}]
   [react/view {:style (merge (styles/community-card 16)
                              {:margin-bottom    12
                               :margin-horizontal 20})}
@@ -41,34 +41,38 @@
                    :size                :paragraph-1
                    :accessibility-label :community-name-text
                    :number-of-lines     1
-                   :ellipsize-mode      :tail}
+                   :ellipsize-mode      :tail
+                   :style               {:color   (when (= notifications :muted)
+                                                    (colors/theme-colors
+                                                     colors/neutral-40
+                                                     colors/neutral-60))}}
         name]
        [community-view/community-stats-column :list-view]]
-      (when (= status :gated)
-        [community-view/permission-tag-container {:locked       locked
-                                                  :status       status
-                                                  :tokens       tokens}])
-      (when unread-messages
-        [icons/icon  :main-icons2/muted {:container-style {:align-items     :center
-                                                           :justify-content :center}
-                                         :resize-mode      :center
-                                         :size             16
-                                         :color            (colors/theme-colors
-                                                            colors/neutral-50
-                                                            colors/neutral-40)}])
-      (when mentions-counts
-        [counter/counter {:type :grey
-                          :value mentions-counts}])
-      (when muted
-        [icons/icon  :main-icons2/muted {:container-style {:align-items     :center
-                                        :justify-content :center}
-                      :resize-mode      :center
-                      :size             16
-                      :color            (colors/theme-colors
-                                         colors/neutral-50
-                                         colors/neutral-40)}])]]]])
+      (if  (= status :gated)
+        [community-view/permission-tag-container {:locked?      locked?
+                                                  :tokens       tokens}]
+        (cond
+          (= notifications :unread-messages-count)
+          [react/view {:style {:width            8
+                               :height           8
+                               :border-radius    4
+                               :background-color (colors/theme-colors
+                                                  colors/neutral-40
+                                                  colors/neutral-60)}}]
 
-(defn communities-membership-list-item [{:keys [id name status tokens locked] :as community}]
+          (= notifications :unread-mentions-count)
+          [counter/counter {:type :default} unread-mention-counts]
+
+          (= notifications :muted)
+          [icons/icon  :main-icons2/muted {:container-style {:align-items     :center
+                                                             :justify-content :center}
+                                           :resize-mode      :center
+                                           :size             20
+                                           :color            (colors/theme-colors
+                                                              colors/neutral-40
+                                                              colors/neutral-50)}]))]]]])
+
+(defn communities-membership-list-item [{:keys [id name status tokens locked?] :as community}]
   [react/view {:margin-bottom       20}
    [react/touchable-highlight {:underlay-color      colors/primary-50-opa-5
                                :style               {:border-radius 12}
@@ -97,6 +101,5 @@
       (when (= status :gated)
         [react/view {:justify-content   :center
                      :margin-right      12}
-         [community-view/permission-tag-container {:locked       locked
-                                                   :status       status
+         [community-view/permission-tag-container {:locked?      locked?
                                                    :tokens       tokens}]])]]]])

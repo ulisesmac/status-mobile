@@ -266,7 +266,7 @@
             :options   {:topBar {:visible false}}
             :component community/community}
            {:name      :discover-communities
-            ;;TODO custom
+            ;;TODO animated-header scroll behaviours
             :options   {:topBar {:visible false}}
             :component discover-communities/communities}
            {:name      :community-management

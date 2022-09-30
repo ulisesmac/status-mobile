@@ -7,7 +7,7 @@
    [status-im.ui.screens.communities.icon :as communities.icon]))
 
 (defn community-card-view-item
-  [{:keys [name description locked
+  [{:keys [name description locked?
            status tokens cover tags featured] :as community} on-press]
   (let [width (* (<sub [:dimensions/window-width]) 0.90)]
     [react/touchable-opacity {:on-press on-press}
@@ -34,8 +34,7 @@
           [communities.icon/community-icon-redesign community 48]]
          (when (= status :gated)
            [react/view (styles/permission-tag-styles)
-            [community-view/permission-tag-container {:locked locked
-                                                      :status status
+            [community-view/permission-tag-container {:locked? locked?
                                                       :tokens tokens}]])
          [community-view/community-title
           {:title name

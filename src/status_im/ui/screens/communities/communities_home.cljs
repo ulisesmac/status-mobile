@@ -7,14 +7,11 @@
             [quo2.components.tabs.tabs :as tabs]
             [quo2.foundations.colors :as colors]
             [quo2.components.community.discover-card :as discover-card]
-            [status-im.ui.screens.chat.photos :as photos]
-            [status-im.multiaccounts.core :as multiaccounts]
-            [status-im.ui.components.topbar :as topbar]
-            [status-im.ui.components.topnav :as topnav]
+            [quo2.components.navigation.top-nav :as topnav]
             [status-im.utils.handlers :refer [<sub >evt]]
             [status-im.i18n.i18n :as i18n]
             [status-im.ui.components.list.views :as list]
-            [status-im.ui.components.react :as react]
+            [status-im.ui.components.react :as rn]
             [status-im.ui.components.plus-button :as components.plus-button]))
 
 (def selected-tab (reagent/atom :all))
@@ -37,20 +34,17 @@
   #js {:length 64 :offset (* 64 index) :index index})
 
 (defn home-community-segments []
-  [react/view {:flex-direction     :row
-               :align-items        :center
-               :padding-bottom     12
-               :padding-top        16
-               :height             60
-               :margin-bottom      12
-               :padding-horizontal 20}
-   [react/view {:flex   1}
-    [tabs/tabs {:size              32
-                :on-change         #(reset! selected-tab %)
-                :default-active    :all
-                :data [{:id :all   :label (i18n/label :chats/joined)}
-                       {:id :open  :label (i18n/label :t/pending)}
-                       {:id :gated :label (i18n/label :t/opened)}]}]]])
+  [rn/view {:padding-bottom     12
+            :padding-top        16
+            :margin-top         8
+            :height             60
+            :padding-horizontal 20}
+   [tabs/tabs {:size              32
+               :on-change         #(reset! selected-tab %)
+               :default-active    :all
+               :data [{:id :all   :label (i18n/label :chats/joined)}
+                      {:id :open  :label (i18n/label :t/pending)}
+                      {:id :gated :label (i18n/label :t/opened)}]}]])
 
 (defn communities-list [communities]
   [list/flat-list
@@ -63,7 +57,7 @@
 
 (defn segments-community-lists [communities]
   (let [tab @selected-tab]
-    [react/view {:padding-left 20}
+    [rn/view {:padding-left 20}
      (case tab
        :all
        [communities-list communities]
@@ -75,13 +69,14 @@
        [communities-list communities])]))
 
 (defn title-column []
-  [react/view
+  [rn/view
    {:flex-direction     :row
     :align-items        :center
     :height             56
     :padding-vertical   12
+    :margin-bottom      8
     :padding-horizontal 20}
-   [react/view
+   [rn/view
     {:flex           1}
     [text/text {:accessibility-label :communities-screen-title
                 :margin-right        6
@@ -90,44 +85,28 @@
      (i18n/label :t/communities)]]
    [plus-button]])
 
-(defn discover-card [joined]
-  [react/touchable-without-feedback
-   {:on-press           #(>evt [:navigate-to  :discover-communities])}
-   [discover-card/discover-card {:joined      joined
-                                 :title       (i18n/label :t/discover)
-                                 :description (i18n/label :t/whats-trending)}]])
+(defn discover-card []
+  [discover-card/discover-card {:on-press    #(>evt [:navigate-to  :discover-communities])
+                                :title       (i18n/label :t/discover)
+                                :description (i18n/label :t/whats-trending)}])
 
 (defn communities-home []
-  (let [multiaccount (<sub [:multiaccount])
-        communities  (<sub [:communities/communities])]
-    [react/view {:style {:flex             1}}
-     [topbar/topbar
-      {:navigation      :none
-       :left-component  [react/view {:margin-left 12}
-                         [photos/photo (multiaccounts/displayed-photo multiaccount)
-                          {:size 32}]]
-       :right-component [react/view {:flex-direction :row
-                                     :margin-right 12}
-                         [topnav/search]
-                         [topnav/qr-scanner]
-                         [topnav/qr-code]
-                         [topnav/notifications-button]]
-       :new-ui?         true
-       :border-bottom   false}]
+  (let [communities  (<sub [:communities/communities])]
+    [rn/view  {:flex    1}
+     [topnav/top-nav {:type    :default}]
      [title-column]
-     [react/scroll-view
-      [discover-card false]
-      [home-community-segments]
-      [segments-community-lists communities]]]))
+     [discover-card]
+     [home-community-segments]
+     [segments-community-lists communities]]))
 
 (defn views []
   [safe-area/consumer
    (fn [insets]
-     [react/view {:style {:flex             1
-                          :padding-top      (:top insets)
-                          :background-color (colors/theme-colors
-                                             colors/neutral-5
-                                             colors/neutral-95)}}
+     [rn/view {:style {:flex             1
+                       :padding-top      (:top insets)
+                       :background-color (colors/theme-colors
+                                          colors/neutral-5
+                                          colors/neutral-95)}}
       [communities-home]])])
 
 

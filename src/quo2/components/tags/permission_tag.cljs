@@ -105,7 +105,7 @@
 
 (defn tag
   [_ _]
-  (fn [{:keys [locked tokens size background-color]
+  (fn [{:keys [locked? tokens size background-color]
         :or {size 24}}]
     [base-tag/base-tag {:background-color  background-color
                         :size              size
@@ -115,7 +115,7 @@
                    :justify-content  :flex-end}
       [react/view {:padding-left    (case 32 8 24 6)
                    :padding-right   (case size 32 16 24 12)}
-       [icons/icon (if locked :main-icons2/locked
+       [icons/icon (if locked? :main-icons2/locked
                        :main-icons2/unlocked)
         {:resize-mode      :center
          :size             (case size 32 20 24 16)

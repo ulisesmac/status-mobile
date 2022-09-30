@@ -13,9 +13,6 @@
   {:id             constants/status-community-id
    :name           "Status"
    :description    "Status is a secure messaging app, crypto wallet and web3 browser built with the state of the art technology"
-   :status         :gated
-   :section        :popular
-   :permissions    true
    :cover          (resources/get-image :community-cover)
    :community-icon (resources/get-image :status-logo)
    :color          (rand-nth quo.colors/chat-colors)
@@ -24,19 +21,20 @@
                     {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
                     {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]})
 
-(def descriptor [{:label   "Community card views"
-                  :key     :view-style
+(def descriptor [{:label   "Status:"
+                  :key     :status
                   :type    :select
                   :options [{:key   :gated
-                             :value "gated"} 
+                             :value "Gated"}
                             {:key   :open
-                             :value "open"}]}
-                 {:label "locked:"
-                  :key   :locked
+                             :value "Open"}]}
+                 {:label "Locked:"
+                  :key   :locked?
                   :type  :boolean}])
 
 (defn cool-preview []
-  (let [state (reagent/atom {:view-style :gated})]
+  (let [state (reagent/atom {:status      :gated
+                             :locked?     true})]
     (fn []
       [rn/touchable-without-feedback {:on-press rn/dismiss-keyboard!}
        [rn/view {:padding-bottom 150}
@@ -45,7 +43,7 @@
          [preview/customizer state descriptor]]
         [rn/view {:padding-vertical 60
                   :justify-content  :center}
-         [community-card-view/community-card-view-item community-data]]]])))
+         [community-card-view/community-card-view-item (merge @state community-data)]]]])))
 
 (defn preview-community-card []
   [rn/view {:background-color (colors/theme-colors colors/neutral-5

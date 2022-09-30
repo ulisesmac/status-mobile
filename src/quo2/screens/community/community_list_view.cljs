@@ -13,9 +13,6 @@
   {:id             constants/status-community-id
    :name           "Status"
    :description    "Status is a secure messaging app, crypto wallet and web3 browser built with the state of the art technology"
-   :status         :gated
-   :section        :popular
-   :permissions    true
    :cover          (resources/get-image :community-cover)
    :community-icon (resources/get-image :status-logo)
    :color          (rand-nth quo.colors/chat-colors)
@@ -24,25 +21,30 @@
                     {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
                     {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]})
 
-(def descriptor [{:label   "Community list view"
-                  :key     :view-style
+(def descriptor [{:label   "Notifications:"
+                  :key     :notifications
+                  :type    :select
+                  :options [{:key   :muted
+                             :value "Muted"}
+                            {:key   :unread-mentions-count
+                             :value "Mention counts"}
+                            {:key   :unread-messages-count
+                             :value "Unread messages"}]}
+                 {:label   "Status:"
+                  :key     :status
                   :type    :select
                   :options [{:key   :gated
-                             :value "gated"}
-                            {:key   :gated
-                             :value "open"}
-                            {:key   :gated
-                             :value "muted"}
-                            {:key   :gated
-                             :value "mentions"}
-                             {:key   :gated
-                              :value "unread-messages"}]}
-                  {:label "locked:"
-                   :key   :locked
-                   :type  :boolean}])
+                             :value "Gated"}
+                            {:key   :open
+                             :value "Open"}]}
+                 {:label   "Locked:"
+                  :key     :locked
+                  :type    :boolean}])
 
 (defn cool-preview []
-  (let [state (reagent/atom {:view-style :gated})]
+  (let [state (reagent/atom {:locked?       true
+                             :status        :gated
+                             :notifications :muted})]
     (fn []
       [rn/touchable-without-feedback {:on-press rn/dismiss-keyboard!}
        [rn/view {:padding-bottom 150}
@@ -51,7 +53,8 @@
          [preview/customizer state descriptor]]
         [rn/view {:padding-vertical 60
                   :justify-content  :center}
-         [community-list-view/communities-list-view-item community-data]]]])))
+         [community-list-view/communities-list-view-item (merge @state
+                                                                community-data)]]]])))
 
 (defn preview-community-list-view []
   [rn/view {:background-color (colors/theme-colors colors/neutral-5

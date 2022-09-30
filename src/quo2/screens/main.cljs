@@ -74,7 +74,10 @@
              :component account-avatar/preview-account-avatar}]
    :buttons [{:name      :button
               :insets    {:top false}
-              :component button/preview-button}]
+              :component button/preview-button}
+             {:name      :dynamic-button
+              :insets    {:top false}
+              :component dynamic-button/preview-dynamic-button}]
    :community [{:name      :community-card-view
                 :insets    {:top false}
                 :component community-card/preview-community-card}
