@@ -12,6 +12,14 @@
    (:notifications activity-center)))
 
 (re-frame/reg-sub
+ :activity-center/loading?
+ :<- [:activity-center/filter-type]
+ :<- [:activity-center/filter-status]
+ :<- [:activity-center/notifications]
+ (fn [[filter-type filter-status notifications]]
+   (get-in notifications [filter-type filter-status :loading?])))
+
+(re-frame/reg-sub
  :activity-center/filter-status
  :<- [:activity-center]
  (fn [activity-center]
@@ -29,7 +37,10 @@
  :<- [:activity-center/filter-status]
  :<- [:activity-center/notifications]
  (fn [[filter-type filter-status notifications]]
-   (get-in notifications [filter-type filter-status :data])))
+   (let [filtered (get-in notifications [filter-type filter-status :data])]
+     (concat filtered
+             (map #(assoc % :id (random-uuid)) filtered)
+             (map #(assoc % :id (random-uuid)) filtered)))))
 
 (re-frame/reg-sub
  :activity-center/filter-status-unread-enabled?

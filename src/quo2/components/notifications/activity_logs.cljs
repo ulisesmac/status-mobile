@@ -144,14 +144,16 @@
        [activity-title title]]
       [activity-timestamp timestamp]]
      (when unread?
-       [activity-unread-dot])]
+       [activity-unread-dot])
+     ]
     (when context
       [activity-context context])
     (when message
       [activity-message message])
     (cond
-      (some? status)
-      [activity-status status]
+      ;; (some? status)
+      ;; [activity-status status]
 
       (or button-1 button-2)
-      [activity-buttons button-1 button-2])]])
+      [activity-buttons button-1 button-2])
+    ]])

@@ -6,6 +6,7 @@
             [status-im.utils.platform :as platform]
             [status-im.utils.utils :as utils]
             ["react" :as reactjs]
+            ["@shopify/react-native-performance" :refer [PerformanceProfiler PerformanceMeasureView]]
             ["react-native" :as react-native :refer (Keyboard BackHandler)]
             ["react-native-image-crop-picker" :default image-picker]
             ["react-native-safe-area-context" :as safe-area-context
@@ -22,6 +23,21 @@
 (def device-event-emitter (.-DeviceEventEmitter react-native))
 
 ;; React Components
+
+(def ^:private rn-performance-profiler
+  (reagent/adapt-react-class PerformanceProfiler))
+
+(def performance-measure
+  (reagent/adapt-react-class PerformanceMeasureView))
+
+(defn performance-profiler
+  [{:keys [on-report-prepared] :as props} & children]
+  (into [rn-performance-profiler
+         (merge props
+                {:on-report-prepared (fn [^js report]
+                                       (when on-report-prepared
+                                         (on-report-prepared (js->clj report :keywordize-keys true))))})
+         children]))
 
 (def app-state (.-AppState react-native))
 (def view (reagent/adapt-react-class (.-View react-native)))

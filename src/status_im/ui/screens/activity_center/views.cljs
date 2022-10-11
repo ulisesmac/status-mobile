@@ -1,5 +1,6 @@
 (ns status-im.ui.screens.activity-center.views
   (:require [quo.components.animated.pressable :as animation]
+            [status-im.ui.components.react :as react]
             [quo.design-system.colors :as quo.colors]
             [quo.react-native :as rn]
             [quo2.components.buttons.button :as button]
@@ -14,6 +15,8 @@
             [status-im.multiaccounts.core :as multiaccounts]
             [status-im.utils.datetime :as datetime]
             [status-im.utils.handlers :refer [<sub >evt]]))
+
+(def measurements (atom {}))
 
 (defn activity-title
   [{:keys [type]}]
@@ -92,18 +95,31 @@
 
 (defn render-notification
   [notification index]
-  [rn/view {:margin-top         (if (= 0 index) 0 4)
-            :padding-horizontal 20}
-   [activity-pressable notification
-    [activity-logs/activity-log
-     (merge {:context   (activity-context notification)
-             :icon      (activity-icon notification)
-             :message   (activity-message notification)
-             :status    (activity-status notification)
-             :timestamp (datetime/timestamp->relative (:timestamp notification))
-             :title     (activity-title notification)
-             :unread?   (not (:read notification))}
-            (activity-buttons notification))]]])
+  ;; [react/performance-measure {:interactive true :screen-name (str "notification-" index)}]
+  (let [before-ms (status-im.utils.datetime/timestamp)
+        result    [rn/view {:margin-top         (if (= 0 index) 0 4)
+                            :padding-horizontal 20
+                            :background-color :orange
+                            :width 100
+                            :height 30}
+                   [activity-logs/activity-log
+                    (merge {;:context   (activity-context notification)
+                            :icon      (activity-icon notification)
+                            ;; :message   (activity-message notification)
+                            ;; :status    (activity-status notification)
+                            ;; :timestamp (datetime/timestamp->relative (:timestamp notification))
+                            ;; :title     (activity-title notification)
+                            ;; :unread?   (not (:read notification))
+                            }
+                           (activity-buttons notification))
+                    ]
+                   ]
+        after-ms  (status-im.utils.datetime/timestamp)]
+    (swap! measurements update :render-notification + (- after-ms before-ms))
+    result))
+
+;; (def render-notification
+;;   (status-im.utils.datetime/measure :render-notification render-notification2))
 
 (defn filter-selector-read-toggle
   []
@@ -197,16 +213,17 @@
 
 (defn activity-center
   []
-  (reagent/create-class
-   {:component-did-mount #(>evt [:activity-center.notifications/fetch-first-page])
-    :reagent-render
-    (fn []
-      (let [notifications (<sub [:activity-center/filtered-notifications])]
-        [rn/flat-list {:content-container-style {:flex-grow 1}
-                       :data                    notifications
-                       :empty-component         [empty-tab]
-                       :header                  [header]
-                       :key-fn                  :id
-                       :on-end-reached          #(>evt [:activity-center.notifications/fetch-next-page])
-                       :render-fn               render-notification
-                       :sticky-header-indices   [0]}]))}))
+  ;; [react/performance-profiler
+  ;;  {:on-report-prepared (fn [^js report]
+  ;;                         (tap> report))}]
+  (let [notifications (<sub [:activity-center/filtered-notifications])
+        loading?      (<sub [:activity-center/loading?])]
+    ;; [react/performance-measure {:interactive (not loading?) :screen-name :flat-list}]
+    [rn/flat-list {:content-container-style {:flex-grow 1}
+                   :data                    notifications
+                   :empty-component         [empty-tab]
+                   :header                  [header]
+                   :key-fn                  :id
+                   :on-end-reached          #(>evt [:activity-center.notifications/fetch-next-page])
+                   :render-fn               render-notification
+                   :sticky-header-indices   [0]}]))

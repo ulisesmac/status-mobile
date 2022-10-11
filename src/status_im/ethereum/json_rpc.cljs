@@ -24,6 +24,10 @@
   [{:keys [method params on-success on-error js-response] :as arg}]
   (let [params (or params [])
         on-error (or on-error (on-error-retry call arg) #(log/warn :json-rpc/error method :error % :params params))]
+    ;; (tap> {:call (types/clj->json {:jsonrpc "2.0"
+    ;;                                :id      1
+    ;;                                :method  method
+    ;;                                :params  params})})
     (status/call-private-rpc
      (types/clj->json {:jsonrpc "2.0"
                        :id      1
@@ -33,6 +37,7 @@
        (if (string/blank? response)
          (on-error {:message "Blank response"})
          (let [response-js (types/json->js response)]
+           ;; (tap> {:response-js (js->clj response-js :keywordize-keys true)})
            (if (.-error response-js)
              (on-error (types/js->clj (.-error response-js)))
              (on-success (if js-response

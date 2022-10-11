@@ -144,12 +144,13 @@
 (fx/defn accept-all-activity-center-notifications
   {:events [:accept-all-activity-center-notifications]}
   [{:keys [db]}]
-  {:db (assoc-in db [:activity.center/notifications :notifications] [])
-   ::json-rpc/call [{:method     "wakuext_acceptAllActivityCenterNotifications"
-                     :params     []
-                     :js-response true
-                     :on-success #(re-frame/dispatch [:sanitize-messages-and-process-response %])
-                     :on-error   #()}]})
+  ;; {:db (assoc-in db [:activity.center/notifications :notifications] [])
+  ;;  ::json-rpc/call [{:method     "wakuext_acceptAllActivityCenterNotifications"
+  ;;                    :params     []
+  ;;                    :js-response true
+  ;;                    :on-success #(re-frame/dispatch [:sanitize-messages-and-process-response %])
+  ;;                    :on-error   #()}]}
+  )
 
 (fx/defn mark-all-activity-center-notifications-as-read
   {:events [:mark-all-activity-center-notifications-as-read]}

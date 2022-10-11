@@ -18,6 +18,8 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.cmcewen.blurview.BlurViewPackage;
 
+import com.shopify.reactnativeperformance.ReactNativePerformance;
+
 import java.util.List;
 
 import im.status.ethereum.keycard.RNStatusKeycardPackage;
@@ -67,6 +69,7 @@ public class MainApplication extends NavigationApplication {
 
     @Override
     public void onCreate() {
+        ReactNativePerformance.onAppStarted();
         super.onCreate();
 
         OkHttpClientProvider.setOkHttpClientFactory(new StatusOkHttpClientFactory());

@@ -233,6 +233,12 @@
 (defn timestamp->year-month-day-date [ms]
   (unparse (:year-month-day formatters) (to-date ms)))
 
+(defn now->iso8601 []
+  (unparse {:format-str "HH:mm:ss.SSS"}
+           (-> (timestamp)
+               (from-long)
+               (plus time-zone-offset))))
+
 (re-frame/reg-cofx
  :now
  (fn [coeffects _]
@@ -240,3 +246,12 @@
 
 (defn to-ms [sec]
   (* 1000 sec))
+
+(defn measure
+  [key f]
+  (fn [& args]
+    (let [before-ms (timestamp)
+          result (apply f args)
+          after-ms (timestamp)]
+      (tap> {key (- after-ms before-ms)})
+      result)))
