@@ -44,9 +44,9 @@
 (defn cool-preview []
   (let [notifications  (reagent/atom  (:notifications nil))
         state (reagent/atom {:locked?       true
-                             :status        (if (not (:notifications notifications))
-                                              :open
-                                              :gated)})]
+                             :status        (if notifications
+                                              :gated
+                                              :open)})]
     (fn []
       [rn/touchable-without-feedback {:on-press rn/dismiss-keyboard!}
        [rn/view {:padding-bottom 150}
