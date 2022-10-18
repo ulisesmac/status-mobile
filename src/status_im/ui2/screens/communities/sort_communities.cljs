@@ -1,4 +1,4 @@
-(ns status-im.ui.screens.communities.sort-communities
+(ns status-im.ui2.screens.communities.sort-communities
   (:require [re-frame.core :as re-frame]
             [quo2.components.markdown.text :as text]
             [quo2.foundations.colors :as colors]

@@ -1,4 +1,4 @@
-(ns status-im.ui.screens.communities.communities-home
+(ns status-im.ui2.screens.communities.communities-home
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [quo2.components.community.community-list-view :as community-list-view]

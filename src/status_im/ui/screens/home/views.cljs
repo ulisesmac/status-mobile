@@ -61,6 +61,7 @@
                :padding-vertical   10}
    [search-input/search-input
     {:search-active?   search-active?
+     :placeholder      (i18n/label :t/search)
      :border-radius    10
      :search-filter    search-filter
      :before           true

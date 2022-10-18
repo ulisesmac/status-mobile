@@ -6,11 +6,11 @@
             [quo2.foundations.colors :as quo2.colors]
             [quo2.components.text-input :as text-input]))
 
-(defn search-input [{:keys [search-active? border-radius before]}]
+(defn search-input [{:keys [search-active? border-radius before placeholder]}]
   (let [input-ref      (atom nil)
         search-active? (or search-active? (reagent/atom nil))]
     (fn [{:keys [on-focus on-change on-blur on-cancel search-filter auto-focus]}]
-      [text-input/text-input {:placeholder         (i18n/label :t/search)
+      [text-input/text-input {:placeholder         placeholder
                               :accessibility-label :search-input
                               :blur-on-submit      true
                               :multiline           false

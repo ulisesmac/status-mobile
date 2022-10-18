@@ -1,4 +1,4 @@
-(ns status-im.ui.screens.communities.discover-communities
+(ns status-im.ui2.screens.communities.discover-communities
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [status-im.i18n.i18n :as i18n]
