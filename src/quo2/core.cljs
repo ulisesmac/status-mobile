@@ -41,7 +41,8 @@
             quo2.components.navigation.page-nav
             quo2.components.selectors.disclaimer
             quo2.components.selectors.selectors
-            quo2.components.loaders.skeleton))
+            quo2.components.loaders.skeleton
+            quo2.components.tags.scrollable-view))
 
 (def button quo2.components.buttons.button/button)
 (def dynamic-button quo2.components.buttons.dynamic-button/dynamic-button)
@@ -62,7 +63,7 @@
 (def context-tag quo2.components.tags.context-tags/context-tag)
 (def group-avatar-tag quo2.components.tags.context-tags/group-avatar-tag)
 (def tabs quo2.components.tabs.tabs/tabs)
-(def scrollable-tabs quo2.components.tabs.tabs/scrollable-tabs)
+(def scrollable-view quo2.components.tags.scrollable-view)
 (def account-selector quo2.components.tabs.account-selector/account-selector)
 (def floating-shell-button quo2.components.navigation.floating-shell-button/floating-shell-button)
 (def status-tag quo2.components.tags.status-tags/status-tag)

@@ -45,6 +45,7 @@
             [status-im2.contexts.quo-preview.tabs.tabs :as tabs]
             [status-im2.contexts.quo-preview.tags.context-tags :as context-tags]
             [status-im2.contexts.quo-preview.tags.tags :as tags]
+            [status-im2.contexts.quo-preview.tags.tag :as tag]
             [status-im2.contexts.quo-preview.tags.permission-tag :as permission-tag]
             [status-im2.contexts.quo-preview.tags.status-tags :as status-tags]
             [status-im2.contexts.quo-preview.tags.token-tag :as token-tag]
@@ -180,6 +181,9 @@
    :tags [{:name      :context-tags
            :insets    {:top false}
            :component context-tags/preview-context-tags}
+          {:name      :tag
+           :insets    {:top false}
+           :component tag/preview-tag}
           {:name      :tags
            :insets    {:top false}
            :component tags/preview-tags}

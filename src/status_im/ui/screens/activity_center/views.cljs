@@ -4,6 +4,7 @@
             [quo.react-native :as rn]
             [quo2.core :as quo2]
             [quo2.foundations.colors :as colors]
+            [quo2.components.tags.scrollable-view :as scrollable-view]
             [status-im.activity-center.notification-types :as types]
             [status-im.i18n.i18n :as i18n]
             [status-im.ui.screens.activity-center.notification.contact-request.view :as contact-request]
@@ -50,7 +51,7 @@
 (defn tabs
   []
   (let [filter-type (rf/sub [:activity-center/filter-type])]
-    [quo2/scrollable-tabs {:size                32
+    [scrollable-view/view {:size                32
                            :blur?               true
                            :override-theme      :dark
                            :style               style/tabs

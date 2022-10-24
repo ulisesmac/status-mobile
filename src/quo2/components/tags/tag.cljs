@@ -25,14 +25,14 @@
                                 :blurred-border-color     colors/white-opa-10
                                 :text-color               {:style {:color colors/white}}}}})
 
-(defn tag-resources [size type resource icon-color label text-color labelled]
+(defn tag-resources [size type resource icon-color label text-color labelled?]
   [rn/view {:style (merge {:flex-direction  :row
-                           :align-items        :center
-                           :justify-content    :center}
-                          (when label
+                           :align-items     :center
+                           :justify-content :center}
+                          (when labelled?
                             {:padding-horizontal (case size 32 12 24 8)}))}
    (when (= type :icon)
-     [icons/icon resource {:container-style (when label
+     [icons/icon resource {:container-style (when labelled?
                                               {:margin-right 4})
                            :resize-mode      :center
                            :size             (case size
@@ -46,9 +46,9 @@
                                      :width  20}
                                  24 {:height 12
                                      :width  12})
-                               (when label
+                               (when labelled?
                                  {:margin-right 4}))}])
-   (when labelled
+   (when labelled?
      [text/text (merge {:size            (case size
                                            32 :paragraph-1
                                            24 :paragraph-2
@@ -59,22 +59,36 @@
       label])])
 
 (defn tag
+  "opts
+   {:type         :icon/:emoji/:label
+    :size         32/24
+    :on-press     fn
+    :blurred?     true/false 
+    :resource     icon/image
+    :labelled?    true/false
+    :disabled?    true/false}
+  
+   opts
+    - `blurred`  boolean: use to determine border color if the background is blurred
+    - `type`     can be icon or emoji with or without a tag label
+    - `labelled` boolean: is true if tag has label else false"
   [_ _]
-  (fn [{:keys [id on-press disabled size resource active accessibility-label
-               label type labelled blurred icon-color] :or   {size 32}}]
-    (let [state (cond disabled :disabled active :active :else :default)
+  (fn [{:keys [id on-press disabled? size resource active accessibility-label
+               label type labelled? blurred? icon-color] :or   {size 32}}]
+    (let [state (cond disabled? :disabled active :active :else :default)
           {:keys [border-color blurred-border-color text-color]}
           (get-in themes [(theme/get-theme) state])]
-      [base-tag/base-tag {:id                  id
-                          :size                size
-                          :border-width        1
-                          :border-color        (if blurred
-                                                 blurred-border-color
-                                                 border-color)
-                          :on-press            on-press
-                          :accessibility-label accessibility-label
-                          :disabled            disabled
-                          :type                type
-                          :label               label}
-       [tag-resources size type resource icon-color label text-color labelled]])))
+      [rn/view {:style {:align-items  :center}}
+       [base-tag/base-tag {:id                  id
+                           :size                size
+                           :border-width        1
+                           :border-color        (if blurred?
+                                                  blurred-border-color
+                                                  border-color)
+                           :on-press            on-press
+                           :accessibility-label accessibility-label
+                           :disabled?           disabled?
+                           :type                type
+                           :labelled?           (if (= type :label) true labelled?)}
+        [tag-resources size type resource icon-color label text-color labelled?]]])))
 
