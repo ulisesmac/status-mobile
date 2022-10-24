@@ -8,6 +8,7 @@
             [quo2.components.markdown.text :as quo2.text]
             [quo2.components.counter.counter :as quo2.counter]
             [quo2.components.tags.tags :as tags]
+            [quo2.components.tags.tag :as tag]
             [quo.components.safe-area :as safe-area]
             [quo2.components.tabs.tabs :as quo2.tabs]
             [status-im.react-native.resources :as resources]
@@ -22,6 +23,7 @@
 (def selected-tab (reagent/atom :all))
 (def view-type   (reagent/atom  :card-view))
 (def sort-list-by (reagent/atom :name))
+(def expand-tags  (reagent/atom false))
 (defonce search-active? (reagent/atom false))
 
 (def mock-community-item-data ;; TODO: remove once communities are loaded with this data.
@@ -83,26 +85,106 @@
      (i18n/label :t/discover-communities)]]
    [search-input-wrapper]])
 
+(defn expand-and-collapse-tags [tags]
+  (if (not @expand-tags)
+    [rn/scroll-view {:horizontal                        true
+                     :height                            48
+                     :margin-right                      40
+                     :padding-vertical                  8
+                     :align-items                       :center
+                     :shows-horizontal-scroll-indicator false
+                     :scroll-event-throttle             64}
+     [tags/tags {:data          tags
+                 :labelled      true
+                 :type          :emoji
+                 :icon-color    (colors/theme-colors
+                                 colors/neutral-50
+                                 colors/neutral-40)}]]
+
+    [rn/view {:flex-wrap        :wrap
+              :min-height       48
+              :align-items      :center
+              :padding-vertical 8}
+     (for [{:keys [label id resource]} tags]
+       ^{:key id}
+       [rn/view {:padding-vertical  8
+                 :margin-right      8}
+        [tag/tag {:id         id
+                  :size       32
+                  :icon-color (colors/theme-colors
+                               colors/neutral-50
+                               colors/neutral-40)
+                  :type        :emoji
+                  :labelled    true
+                  :label       label
+                  :resource    resource}]])]))
+
 (defn community-filter-tags []
-  (let [filters [{:id 1 :tag-label (i18n/label :t/music) :resource (resources/get-image :music)}
-                 {:id 2 :tag-label (i18n/label :t/lifestyle) :resource (resources/get-image :lifestyle)}
-                 {:id 3 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}
-                 {:id 4 :tag-label (i18n/label :t/podcasts) :resource (resources/get-image :podcasts)}]]
-    [rn/view {:height              64
-              :align-items        :center
-              :flex-direction      :row}
-     [rn/scroll-view {:horizontal                        true
-                      :height                            48
-                      :shows-horizontal-scroll-indicator false
-                      :scroll-event-throttle             64
-                      :padding-top                       16
-                      :padding-horizontal                20}
-      [tags/tags {:data          filters
-                  :labelled      true
-                  :type          :emoji
-                  :icon-color     (colors/theme-colors
-                                   colors/neutral-50
-                                   colors/neutral-40)}]]]))
+  (let [tags [{:id  1  :label (i18n/label :t/music)     :resource  (resources/get-image :music)}
+              {:id  2  :label (i18n/label :t/lifestyle) :resource  (resources/get-image :lifestyle)}
+              {:id  3  :label (i18n/label :t/podcasts)  :resource  (resources/get-image :podcasts)}
+              {:id  4  :label (i18n/label :t/music)     :resource  (resources/get-image :music)}
+              {:id  6  :label (i18n/label :t/lifestyle) :resource  (resources/get-image :lifestyle)}
+              {:id  7  :label (i18n/label :t/podcasts)  :resource  (resources/get-image :podcasts)}
+              {:id  8  :label (i18n/label :t/music)     :resource  (resources/get-image :music)}
+              {:id  9  :label (i18n/label :t/lifestyle) :resource  (resources/get-image :lifestyle)}
+              {:id  10 :label (i18n/label :t/podcasts)  :resource  (resources/get-image :podcasts)}]]
+    [rn/view
+     [rn/view {:flex-direction      :row
+               :padding-horizontal  20
+               :height              48
+               :margin-top          12 
+               :align-items         :center}
+      (when (not @expand-tags)
+        [rn/scroll-view {:horizontal                        true
+                         :margin-right                      40
+                         :padding-vertical                  8
+                         :height                            48
+                         :align-items                       :center
+                         :shows-horizontal-scroll-indicator false
+                         :scroll-event-throttle             64}
+         [tags/tags {:data          tags
+                     :labelled      true
+                     :type          :emoji
+                     :icon-color    (colors/theme-colors
+                                     colors/neutral-50
+                                     colors/neutral-40)}]])
+      [rn/view {:style {:margin-left  8
+                        :position     :absolute
+                        :right        20}}
+       [tag/tag {:size      32
+                 :icon-color (colors/theme-colors
+                              colors/neutral-50
+                              colors/neutral-40)
+                 :type        :icon
+                 :labelled    true
+                 :resource   (if @expand-tags
+                               :main-icons2/chevron-up
+                               :main-icons2/chevron-down)
+                 :on-press    #(do (if @expand-tags
+                                     (reset! expand-tags false)
+                                     (reset! expand-tags true)))}]]]
+     (when @expand-tags
+       [rn/view {:flex-direction   :row
+                 :flex-wrap        :wrap
+                 :min-height       48
+                 :align-items      :center
+                 :padding-left     20
+                 :padding-vertical 8}
+        (for [{:keys [label id resource]} tags]
+          ^{:key id}
+          [rn/view {:padding-vertical  8
+                    :margin-right      8}
+           [tag/tag {:id         id
+                     :size       32
+                     :icon-color (colors/theme-colors
+                                  colors/neutral-50
+                                  colors/neutral-40)
+                     :type        :emoji
+                     :labelled    true
+                     :label       label
+                     :resource    resource}]])])]))
+
 
 (defn discover-community-segments []
   [rn/view {:flex               1

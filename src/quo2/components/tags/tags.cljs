@@ -8,14 +8,14 @@
     (fn [{:keys [data size type labelled disabled blurred icon-color] :or {size 32}}]
       (let [active-id @active-tab-id]
         [rn/view {:flex-direction :row}
-         (for [{:keys [tag-label id resource]} data]
+         (for [{:keys [label id resource]} data]
            ^{:key id}
            [rn/view {:margin-right 8}
             [tag/tag
              (merge {:id            id
                      :size          size
                      :type          type
-                     :label         (if labelled tag-label (when (= type :label) tag-label))
+                     :label         (if labelled label (when (= type :label) label))
                      :active        (= id active-id)
                      :disabled      disabled
                      :blurred       blurred
@@ -25,5 +25,4 @@
                                       :main-icons2/placeholder
                                       resource)
                      :on-press      #(do (reset! active-tab-id %)
-                                         (when on-change (on-change %)))})
-             tag-label]])]))))
+                                         (when on-change (on-change %)))})]])]))))
