@@ -1,15 +1,17 @@
-(ns status-im.ui.screens.communities.sort-communities
+(ns status-im.ui.screens.communities.sort-communities-sheet
   (:require [re-frame.core :as re-frame]
+            [reagent.core :as reagent]
             [quo2.components.markdown.text :as text]
             [quo2.foundations.colors :as colors]
-            [quo.core :as quo]
-            [quo.theme :as theme]
+            [quo2.components.list-items.menu-item :as menu-item]
             [status-im.ui.components.react :as react]
             [status-im.i18n.i18n :as i18n]))
 
-(defn hide-sheet-and-dispatch [event]
-  (re-frame/dispatch [:bottom-sheet/hide])
-  (re-frame/dispatch event))
+(def sort-by-selected (reagent/atom :name))
+
+(defn hide-sheet-and-reset-sort-by [selected]
+  (reset! sort-by-selected selected)
+  (re-frame/dispatch [:bottom-sheet/hide]))
 
 (defn sort-communities-view []
   [:<>
@@ -23,30 +25,30 @@
               :weight              :medium
               :size                :paragraph-2}}
      (i18n/label :t/sort-communities)]]
-   [quo/list-item
-    {:theme               (theme/get-theme)
+   [menu-item/menu-item
+    {:type               :main
      :title               (i18n/label :t/alphabetically)
      :accessibility-label :alphabetically
      :icon                :main-icons2/alphabetically
-     :new-ui?             true}]
-   [quo/list-item
-    {:theme               (theme/get-theme)
+     :on-press            #(hide-sheet-and-reset-sort-by :name)}]
+   [menu-item/menu-item
+    {:type               :main
      :title               (i18n/label :t/total-members)
      :accessibility-label :total-members
      :icon                :main-icons2/members
-     :new-ui?             true}]
-   [quo/list-item
-    {:theme               (theme/get-theme)
+     :on-press            #(hide-sheet-and-reset-sort-by :total-members)}]
+   [menu-item/menu-item
+    {:type                :main
      :title               (i18n/label :t/active-members)
      :accessibility-label :active-members
-     :icon                :main-icons2/flash
-     :new-ui?             true}]
-   [quo/list-item
-    {:theme               (theme/get-theme)
+     :icon                :main-icons2/active-member
+     :on-press            #(hide-sheet-and-reset-sort-by :active-members)}]
+   [menu-item/menu-item
+    {:type               :main
      :title               (i18n/label :t/mutal-contacts)
      :accessibility-label :mutual-contacts
      :icon                :main-icons2/friend
-     :new-ui?             true}]])
+     :on-press            #(hide-sheet-and-reset-sort-by :mutual-contacts)}]])
 
-(def sort-communities
+(def sort-communities-sheet
   {:content sort-communities-view})

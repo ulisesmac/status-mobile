@@ -5,7 +5,7 @@
             [status-im.ui.screens.keycard.views :as keycard]
             [status-im.ui.screens.multiaccounts.key-storage.views :as key-storage]
             [status-im.ui.screens.about-app.views :as about-app]
-            [status-im.ui.screens.communities.sort-communities :as sort]
+            [status-im.ui.screens.communities.sort-communities-sheet :as sort-communities]
             [status-im.ui.screens.multiaccounts.recover.views :as recover.views]
             [quo.core :as quo]))
 
@@ -41,7 +41,7 @@
           (merge key-storage/migrate-account-password)
 
           (= view :sort-communities)
-          (merge sort/sort-communities))]
+          (merge sort-communities/sort-communities-sheet))]
     [quo/bottom-sheet opts
      (when content
        [content (when options options)])]))
