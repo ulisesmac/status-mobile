@@ -109,16 +109,17 @@
            community-icon
            tokens
            locked?]}]
-  [rn/view {:margin-bottom 20}
+  [rn/view {:margin-bottom 20} 
    [rn/touchable-highlight
     (merge {:underlay-color colors/primary-50-opa-5
             :style          {:border-radius 12}}
            props)
-    [rn/view {:flex 1}
+    [rn/view {:flex   1}
      [rn/view
       {:flex-direction :row
        :border-radius  16
-       :align-items    :center}
+       :align-items    :center
+       :height         48}
 
       (when community-icon
         [community-icon-view community-icon])

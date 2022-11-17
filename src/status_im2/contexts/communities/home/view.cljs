@@ -5,8 +5,8 @@
             [react-native.core :as rn]
             [reagent.core :as reagent]
             [status-im2.common.home.view :as common.home]
-            [status-im2.contexts.communities.home.actions.view :as home.actions]
-            [utils.re-frame :as rf]))
+            [utils.re-frame :as rf]
+            [status-im.ui.screens.communities.community-options-bottom-sheet :as home-actions]))
 
 (defn render-fn
   [id]
@@ -17,8 +17,10 @@
                        (rf/dispatch [:dismiss-keyboard])
                        (rf/dispatch [:navigate-to-nav2 :community {:community-id id}]))
       :on-long-press #(rf/dispatch [:bottom-sheet/show-sheet
-                                    {:content (fn []
-                                                [home.actions/actions community-item])}])}
+                                    {:content   (fn [] 
+                                                  [home-actions/options-menu community-item])
+                                     :selected  (fn []
+                                                  [quo/communities-membership-list-item community-item])}])}
      community-item]))
 
 (defn get-item-layout-js
@@ -56,9 +58,8 @@
   (let [ids-by-user-involvement (rf/sub [:communities/community-ids-by-user-involvement])
         tab                     @selected-tab]
     [rn/view
-     {:style {:padding-left     20
-              :padding-right    8
-              :padding-vertical 12}}
+     {:style {:padding-horizontal 20
+              :padding-vertical   12}}
      (case tab
        :joined
        [communities-list (:joined ids-by-user-involvement)]

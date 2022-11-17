@@ -37,7 +37,7 @@
 
           (= view :recover-sheet)
           (merge recover.views/bottom-sheet)
-
+          
           (= view :migrate-account-password)
           (merge key-storage/migrate-account-password)
 

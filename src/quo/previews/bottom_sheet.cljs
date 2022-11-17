@@ -48,6 +48,7 @@
            [quo/text {:color :secondary-inverse}
             (str "Open sheet: " @visible)]]]]
 
+<<<<<<< HEAD
         [quo/bottom-sheet
          (merge @state
                 {:visible?  @visible
@@ -56,6 +57,14 @@
           {:style {:height          (if @scrollable 1200 400)
                    :justify-content :center
                    :align-items     :center}}
+=======
+        [quo/bottom-sheet (merge @state
+                                 {:visible?  @visible 
+                                  :on-cancel #(reset! visible false)})
+         [rn/view {:style {:height          (if @scrollable 1200 400)
+                           :justify-content :center
+                           :align-items     :center}}
+>>>>>>> 162b2efdd (show selected community list item in bottom sheet)
           [rn/touchable-opacity {:on-press #(reset! visible false)}
            [quo/text {:color :link} "Close"]]
           [rn/touchable-opacity

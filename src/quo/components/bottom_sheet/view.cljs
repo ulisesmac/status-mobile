@@ -8,6 +8,7 @@
             [quo.platform :as platform]
             [quo.react :as react]
             [quo.react-native :as rn]
+            [quo2.components.community.community-list-view :as community-list-view]
             [reagent.core :as reagent]))
 
 (def opacity-coeff 0.8)
@@ -29,11 +30,12 @@
          backdrop-dismiss?  :backdropDismiss?
          back-button-cancel :backButtonCancel
          children           :children
+         selected           :selected
          :or                {show-handle?       true
                              backdrop-dismiss?  true
                              back-button-cancel true}}
         (bean/bean props)
-        body-ref (react/create-ref)
+        body-ref   (react/create-ref)
         master-ref (react/create-ref)
 
         height (react/state 0)
@@ -91,14 +93,14 @@
         translate-y (react/use-memo
                      (fn []
                        (animated/with-easing
-                        {:value          (animated/cond* (animated/less-or-eq master-translation-y 0)
-                                                         (animated/divide master-translation-y 2)
-                                                         master-translation-y)
-                         :velocity       master-velocity-y
-                         :offset         offset
-                         :state          master-state
-                         :animation-over drag-over
-                         :snap-points    [open-snap-point close-snap-point]}))
+                         {:value          (animated/cond* (animated/less-or-eq master-translation-y 0)
+                                                          (animated/divide master-translation-y 2)
+                                                          master-translation-y)
+                          :velocity       master-velocity-y
+                          :offset         offset
+                          :state          master-state
+                          :animation-over drag-over
+                          :snap-points    [open-snap-point close-snap-point]}))
                      [])
         opacity (react/use-memo
                  (fn []
@@ -185,49 +187,47 @@
          (close-sheet)))
      [visible?])
     (reagent/as-element
-     [rn/view
-      {:style          styles/container
-       :pointer-events :box-none}
-      [gesture-handler/tap-gesture-handler
-       (merge {:enabled backdrop-dismiss?}
-              tap-gesture-handler)
-       [animated/view
-        {:style (merge (styles/backdrop)
-                       (when platform/ios?
-                         {:opacity          opacity
-                          :background-color (:backdrop @colors/theme)}))}]]
-      [animated/view
-       {:style (merge (styles/content-container window-height)
-                      {:transform [{:translateY (if (= sheet-height max-height)
-                                                  (animated/add translate-y
-                                                                keyboard-height-android-delta)
-                                                  translate-y)}
-                                   {:translateY (* window-height 2)}]})}
-       [gesture-handler/pan-gesture-handler
-        (merge on-master-event
-               {:ref      master-ref
-                :wait-for body-ref
-                :enabled  (not disable-drag?)})
-        [animated/view {:style styles/content-header}
-         (when show-handle?
-           [rn/view {:style styles/handle}])]]
-       [gesture-handler/pan-gesture-handler
-        (merge on-body-event
-               {:ref      body-ref
-                :wait-for master-ref
-                :enabled  (and (not disable-drag?)
-                               (not= sheet-height max-height))})
-        [animated/view
-         {:height sheet-height
-          :flex   1}
-         [animated/view
-          {:style     {:padding-top    styles/vertical-padding
-                       :padding-bottom (+ styles/vertical-padding
-                                          (if (and platform/ios? keyboard-shown)
-                                            keyboard-height
-                                            (:bottom safe-area)))}
-           :on-layout #(reset! height (.-nativeEvent.layout.height ^js %))}
-          (into [:<>]
-                (react/get-children children))]]]]])))
+     [rn/view {:style          styles/container
+               :pointer-events :box-none}
+      [gesture-handler/tap-gesture-handler (merge {:enabled backdrop-dismiss?}
+                                                  tap-gesture-handler)
+       [animated/view {:style (merge (styles/backdrop)
+                                     (when platform/ios?
+                                       {:opacity          opacity
+                                        :background-color (:backdrop @colors/theme)}))}]]
+      [animated/view {:style (merge (styles/content-container window-height)
+                                    {:transform [{:translateY (if (= sheet-height max-height)
+                                                                (animated/add translate-y keyboard-height-android-delta)
+                                                                translate-y)}
+                                                 {:translateY (* window-height 2)}]})}
+       [rn/view {:style styles/selected-item-styles}
+        (js/console.log (type selected))
+        [selected]]
+       [animated/view {:flex                    1
+                       :background-color        (:ui-background @colors/theme)
+                       :border-top-left-radius  16
+                       :border-top-right-radius 16}
+        [gesture-handler/pan-gesture-handler (merge on-master-event
+                                                    {:ref      master-ref
+                                                     :wait-for body-ref
+                                                     :enabled  (not disable-drag?)})
+         [animated/view  {:style styles/content-header}
+          (when show-handle?
+            [rn/view {:style styles/handle}])]]
+        [gesture-handler/pan-gesture-handler (merge on-body-event
+                                                    {:ref      body-ref
+                                                     :wait-for master-ref
+                                                     :enabled  (and (not disable-drag?)
+                                                                    (not= sheet-height max-height))})
+         [animated/view {:height sheet-height
+                         :flex           1}
+          [animated/view {:style     {:padding-top    styles/vertical-padding
+                                      :padding-bottom (+ styles/vertical-padding
+                                                         (if (and platform/ios? keyboard-shown)
+                                                           keyboard-height
+                                                           (:bottom safe-area)))}
+                          :on-layout #(reset! height (.-nativeEvent.layout.height ^js %))}
+           (into [:<>]
+                 (react/get-children children))]]]]]])))
 
 (def bottom-sheet (reagent/adapt-react-class (react/memo bottom-sheet-hooks)))
