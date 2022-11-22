@@ -126,7 +126,7 @@
      [rn/view {:style {:flex             1
                        :background-color (colors/theme-colors
                                           colors/white
-                                          colors/neutral-90)}}
+                                          colors/neutral-95)}}
       [quo/button {:icon     true
                    :type     :grey
                    :size     32

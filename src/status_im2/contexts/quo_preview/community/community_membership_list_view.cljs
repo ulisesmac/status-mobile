@@ -39,9 +39,15 @@
         [rn/view {:flex 1
                   :padding       16}
          [preview/customizer state descriptor]]
-        [rn/view {:padding-vertical 60
-                  :justify-content  :center}
-         [community-list-view/communities-membership-list-item {} (cond-> (merge @state data/community)
+        [rn/view {:padding-vertical   60
+                  :padding-horizontal 16
+                  :justify-content    :center}
+         [community-list-view/communities-membership-list-item {} (cond-> 
+                                                                   (merge @state 
+                                                                          data/community 
+                                                                          {:background-color (colors/theme-colors 
+                                                                                              colors/white 
+                                                                                              colors/neutral-90)})
                                                                     (= :muted (:notifications @state))
                                                                     (assoc :muted? true)
 

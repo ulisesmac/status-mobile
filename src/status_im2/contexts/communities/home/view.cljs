@@ -26,15 +26,17 @@
     :accessibility-label :new-chat-button}])
 
 (defn render-fn [id]
-  (let [community-item (rf/sub [:communities/home-item id])]
+  (let [community-item (rf/sub [:communities/home-item id])] 
     [quo/communities-membership-list-item
      {:on-press      (fn []
                        (rf/dispatch [:communities/load-category-states id])
                        (rf/dispatch [:dismiss-keyboard])
                        (rf/dispatch [:navigate-to :community {:community-id id}]))
       :on-long-press #(rf/dispatch [:bottom-sheet/show-sheet
-                                    {:content (fn []
-                                                [home.actions/actions community-item])}])}
+                                    {:content  (fn []
+                                                 [home.actions/actions community-item])
+                                     :selected (fn [] 
+                                                 [quo/communities-membership-list-item community-item])}])}
      community-item]))
 
 (defn get-item-layout-js [_ index]

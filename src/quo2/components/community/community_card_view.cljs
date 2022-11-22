@@ -28,7 +28,6 @@
       [rn/view (style/card-view-content-container 12)
        [rn/view (style/card-view-chat-icon 48)]
        ;;TODO new pure component based on quo2 should be implemented without status-im usage
-       ;[communities.icon/community-icon-redesign community 48]]
        (when (= status :gated)
          [rn/view (style/permission-tag-styles)
           [community-view/permission-tag-container {:locked locked

@@ -25,10 +25,7 @@
 
 (defn content-container
   [window-height]
-  {:background-color        (:ui-background @colors/theme)
-   :border-top-left-radius  border-radius
-   :border-top-right-radius border-radius
-   :height                  (* window-height 2)})
+  {:height                  (* window-height 2)})
 
 (def content-header
   {:height          border-radius
@@ -42,3 +39,8 @@
    :background-color (:icon-02 @colors/theme)
    :opacity          0.4
    :border-radius    2})
+
+(def selected-item-styles
+  {:margin-left   8
+   :margin-right  8
+   :margin-bottom 8})
