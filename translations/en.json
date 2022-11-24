@@ -1868,5 +1868,9 @@
     "biu": "BIU",
     "bold": "Bold",
     "italic": "Italic",
-    "strikethrough": "Strikethrough"
+    "strikethrough": "Strikethrough",
+    "added-to-group-chat": "Added to group chat",
+    "added-you-to": "added you to",
+    "removed-from-group-chat": "Removed from group chat",
+    "removed-you-from": "removed you from"
 }
