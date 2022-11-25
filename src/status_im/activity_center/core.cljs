@@ -36,6 +36,19 @@
 
 ;;;; Notification reconciliation
 
+(defn- notification-comparator
+  [[read1 timestamp1 id1] [read2 timestamp2 id2]]
+  (let [compare-read (compare read1 read2)] ; Unread first
+    (if (zero? compare-read)
+      (let [compare-timestamp (compare timestamp2 timestamp1)]
+        (if (zero? compare-timestamp)
+          (compare id2 id1)
+          compare-timestamp))
+      compare-read)))
+
+(def ^:private notification-sort-key-fn
+  (juxt :read :timestamp :id))
+
 (defn- update-notifications
   "Insert `new-notifications` in `db-notifications`.
 
@@ -49,10 +62,9 @@
             (let [remove-notification (fn [data]
                                         (remove #(= id (:id %)) data))
                   insert-and-sort     (fn [data]
-                                        (->> notification
-                                             (conj data)
-                                             (sort-by (juxt :timestamp :id))
-                                             reverse))]
+                                        (sort-by notification-sort-key-fn
+                                                 notification-comparator
+                                                 (conj data notification)))]
               (as-> acc $
                 (update-in $ [type :all :data] remove-notification)
                 (update-in $ [types/no-type :all :data] remove-notification)

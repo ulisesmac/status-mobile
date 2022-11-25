@@ -339,31 +339,36 @@
                   :unread {:data [new-notif-1]}}}
                 (get-in (h/db) [:activity-center :notifications]))))))
 
-    ;; Sorting by timestamp and ID is compatible with what the backend does when
-    ;; returning paginated results.
-    (testing "sorts notifications by timestamp and id in descending order"
+    (testing "sorts notifications by unread first, timestamp DESC and ID DESC"
       (rf-test/run-test-sync
        (setup)
-       (let [notif-1     {:id "0x1" :read true :type types/one-to-one-chat :timestamp 1}
-             notif-2     {:id "0x2" :read true :type types/one-to-one-chat :timestamp 1}
-             notif-3     {:id "0x3" :read false :type types/one-to-one-chat :timestamp 50}
+       (let [notif-1     {:id "0x1" :read true :type types/one-to-one-chat :timestamp 101}
+             notif-2     {:id "0x2" :read true :type types/one-to-one-chat :timestamp 101}
+             notif-3     {:id "0x3" :read false :type types/one-to-one-chat :timestamp 101}
              notif-4     {:id "0x4" :read false :type types/one-to-one-chat :timestamp 100}
              notif-5     {:id "0x5" :read false :type types/one-to-one-chat :timestamp 100}
+             notif-6     {:id "0x6" :read false :type types/contact-request :timestamp 100}
              new-notif-1 (assoc notif-1 :last-message {})
              new-notif-4 (assoc notif-4 :last-message {})]
          (rf/dispatch [:test/assoc-in [:activity-center :notifications]
                        {types/one-to-one-chat
-                        {:all    {:cursor "" :data [notif-1 notif-2]}
-                         :unread {:cursor "" :data [notif-3 notif-4 notif-5]}}}])
+                        {:all    {:cursor "" :data [notif-1 notif-2 notif-3 notif-4 notif-5]}
+                         :unread {:cursor "" :data [notif-3 notif-4 notif-5]}}
+                        types/contact-request
+                        {:all    {:cursor "" :data [notif-6]}
+                         :unread {:cursor "" :data [notif-6]}}}])
 
          (rf/dispatch [:activity-center.notifications/reconcile [new-notif-1 new-notif-4]])
 
          (is (= {types/no-type
                  {:all    {:data [new-notif-4 new-notif-1]}
                   :unread {:data [new-notif-4]}}
+                 types/contact-request
+                 {:all    {:cursor "" :data [notif-6]}
+                  :unread {:cursor "" :data [notif-6]}}
                  types/one-to-one-chat
-                 {:all    {:cursor "" :data [new-notif-4 notif-2 new-notif-1]}
-                  :unread {:cursor "" :data [notif-5 new-notif-4 notif-3]}}}
+                 {:all    {:cursor "" :data [notif-3 notif-5 new-notif-4 notif-2 new-notif-1]}
+                  :unread {:cursor "" :data [notif-3 notif-5 new-notif-4]}}}
                 (get-in (h/db) [:activity-center :notifications]))))))))
 
 ;;;; Notifications fetching and pagination
