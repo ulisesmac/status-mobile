@@ -43,6 +43,7 @@
             [status-im2.contexts.quo-preview.tabs.account-selector :as account-selector]
             [status-im2.contexts.quo-preview.tabs.segmented-tab :as segmented]
             [status-im2.contexts.quo-preview.tabs.tabs :as tabs]
+            [status-im2.contexts.quo-preview.qr.qr :as qr]
             [status-im2.contexts.quo-preview.tags.context-tags :as context-tags]
             [status-im2.contexts.quo-preview.tags.tags :as tags]
             [status-im2.contexts.quo-preview.tags.permission-tag :as permission-tag]
@@ -74,6 +75,9 @@
             {:name      :account-avatar
              :insets    {:top false}
              :component account-avatar/preview-account-avatar}]
+   :qr [{:name :qr-code
+         :insets    {:top false}
+         :component   qr/playground-view}]
    :buttons [{:name      :button
               :insets    {:top false}
               :component button/preview-button}
