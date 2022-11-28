@@ -9,7 +9,7 @@
             [utils.re-frame :as rf]))
 
 (defn view
-  [{:keys [author] :as notification}]
+  [{:keys [author chat-id chat-name] :as notification}]
   (let [contact   (rf/sub [:contacts/contact-by-identity author])
         ;; TODO: Get the notification information (whether user is removed or added) from Status-Go
         removed-user-from-group-chat? true
@@ -19,8 +19,7 @@
                     [:<>]
                     [animation/pressable {:on-press (fn []
                                                       (rf/dispatch [:hide-popover])
-                                                      ;; (rf/dispatch [:chat.ui/navigate-to-chat chat-id])
-                                                      )}])]
+                                                      (rf/dispatch [:chat.ui/navigate-to-chat chat-id]))}])]
     (conj pressable
           [quo2/activity-log
            {:title     title
@@ -36,9 +35,8 @@
                          (activity-center.utils/contact-name contact)
                          (multiaccounts/displayed-photo contact)]
                         [quo2/text {:style style/tag-text} context-tag-text]
-                        ;; TODO: Get the group chat information from Status-Go
-                        [quo2/group-avatar-tag "Memes" {:size           :small
-                                                        :override-theme :dark
-                                                        :color          :purple
-                                                        :style          style/tag
-                                                        :text-style     style/tag-text}]]}])))
+                        [quo2/group-avatar-tag chat-name {:size           :small
+                                                          :override-theme :dark
+                                                          :color          :purple
+                                                          :style          style/tag
+                                                          :text-style     style/tag-text}]]}])))
