@@ -59,7 +59,7 @@
 (defn featured-communities-header [communities-count]
   [rn/view {:flex-direction     :row
             :height             30
-            :margin-bottom 8
+            :margin-bottom      8
             :justify-content    :space-between}
    [rn/view {:flex-direction :row
              :align-items    :center}
@@ -81,9 +81,9 @@
   (let [view-size (reagent/atom 0)]
     (fn []
       [rn/view {:style {:flex-direction :row
-                        :overflow :hidden
-                        :width "100%"
-                        :margin-bottom 24}
+                        :overflow       :hidden
+                        :width          "100%"
+                        :margin-bottom  24}
                 :on-layout #(swap! view-size
                                    (fn []
                                      (oops/oget % "nativeEvent.layout.width")))}
@@ -105,13 +105,13 @@
   [rn/flat-list
    {:key-fn                            :id
     :keyboard-should-persist-taps      :always
-    :shows-horizontal-scroll-indicator false
-    :separator                 [rn/view {:margin-bottom 16}]
+    :shows-vertical-scroll-indicator   false
+    :separator                         [rn/view {:margin-bottom 16}]
     :data                              communities
-    :render-fn                        render-fn
-    :render-data              {:featured? false
-                               :width "100%"
-                               :view-type view-type}}])
+    :render-fn                         render-fn
+    :render-data                       {:featured?  false
+                                        :width      "100%"
+                                        :view-type  view-type}}])
 
 (defn discover []
   (let  [view-type (reagent/atom :card-view)]
@@ -122,12 +122,12 @@
             sorted-communities (sort-by :name communities)]
         [safe-area/consumer
          (fn []
-           [rn/view {:style {:margin-left     20
-                             :margin-right    20
+           [rn/view {:style {:padding-left     20
+                             :padding-right    20
                              :flex             1
                              :background-color (colors/theme-colors
                                                 colors/white
-                                                colors/neutral-90)}}
+                                                colors/neutral-95)}}
             [quo/button {:icon     true
                          :type     :grey
                          :size     32
