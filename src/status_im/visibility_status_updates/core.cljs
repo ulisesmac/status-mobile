@@ -4,7 +4,7 @@
             [status-im.ethereum.json-rpc :as json-rpc]
             [status-im.multiaccounts.update.core :as multiaccounts.update]
             [status-im.ui.screens.profile.visibility-status.utils :as utils]
-            [status-im.utils.datetime :as datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]))
 
 (defn valid-status-type?

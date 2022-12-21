@@ -19,7 +19,7 @@
             [status-im.signing.gas :as signing.gas]
             [status-im.utils.config :as config]
             [status-im.utils.core :as utils.core]
-            [status-im.utils.datetime :as datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]
             [status-im.utils.mobile-sync :as mobile-network-utils]
             [status-im.utils.money :as money]

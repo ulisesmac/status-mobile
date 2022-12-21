@@ -9,7 +9,7 @@
             [status-im.transport.utils :as transport.utils]
             [status-im.ui.components.react :as react]
             [status-im.utils.build :as build]
-            [status-im.utils.datetime :as datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]
             [status-im.utils.platform :as platform]
             [status-im.utils.types :as types]

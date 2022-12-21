@@ -7,7 +7,7 @@
             [status-im.keycard.nfc :as nfc]
             [status-im.popover.core :as popover]
             [status-im.ui.screens.keycard.keycard-interaction :as keycard-sheet]
-            [status-im.utils.datetime :as utils.datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]
             [status-im.utils.keychain.core :as keychain]
             [status-im.utils.platform :as platform]
@@ -429,7 +429,7 @@
 
 (fx/defn update-pairings
   [{:keys [db]} instance-uid pairing]
-  (let [paired-on (utils.datetime/timestamp)
+  (let [paired-on (datetime/timestamp)
         pairings  (-> (get-in db [:keycard :pairings])
                       (assoc instance-uid {:pairing pairing :paired-on paired-on}))]
     {:keycard/persist-pairings pairings

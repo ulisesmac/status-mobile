@@ -12,7 +12,7 @@
             [status-im.multiaccounts.model :as multiaccounts.model]
             [status-im.native-module.core :as status]
             [status-im.popover.core :as popover]
-            [status-im.utils.datetime :as utils.datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]
             [status-im.utils.keychain.core :as keychain]
             [status-im.utils.platform :as platform]
@@ -40,7 +40,7 @@
             :keycard.onboarding.pair.ui/next-pressed]}
   [{:keys [db] :as cofx}]
   (let [pairing   (get-in db [:keycard :secrets :pairing])
-        paired-on (get-in db [:keycard :secrets :paired-on] (utils.datetime/timestamp))]
+        paired-on (get-in db [:keycard :secrets :paired-on] (datetime/timestamp))]
     (fx/merge cofx
               (if pairing
                 {:db (-> db
@@ -369,7 +369,7 @@
                                         (assoc-in [:keycard :pin :status] :verifying)
                                         (assoc-in [:keycard :secrets]
                                                   {:pairing   pairing'
-                                                   :paired-on (utils.datetime/timestamp)}))
+                                                   :paired-on (datetime/timestamp)}))
                :keycard/import-keys
                {:pin        pin
                 :on-success :keycard.callback/on-generate-and-load-key-success}})))

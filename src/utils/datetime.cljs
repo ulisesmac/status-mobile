@@ -1,4 +1,4 @@
-(ns status-im.utils.datetime
+(ns utils.datetime
   (:require [cljs-time.coerce :as t.coerce]
             [cljs-time.core :as t]
             [cljs-time.format :as t.format]
@@ -80,7 +80,7 @@
     (fn []
       (or @formatter
           (reset! formatter
-            (goog.18n/mk-fmt i18n/locale format))))))
+                  (goog.18n/mk-fmt i18n/locale format))))))
 
 (def date-time-fmt (get-formatter-fn medium-date-time-format))
 (def date-fmt (get-formatter-fn medium-date-format))

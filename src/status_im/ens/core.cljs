@@ -8,7 +8,7 @@
             [status-im.ethereum.ens :as ens]
             [status-im.ethereum.stateofus :as stateofus]
             [status-im.multiaccounts.update.core :as multiaccounts.update]
-            [status-im.utils.datetime :as datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.fx :as fx]
             [status-im.utils.random :as random]
             [status-im2.navigation.events :as navigation]))

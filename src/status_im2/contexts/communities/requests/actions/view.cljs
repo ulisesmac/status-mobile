@@ -10,7 +10,7 @@
             [status-im.communities.core :as communities]
             [status-im.i18n.i18n :as i18n]
             [status-im.react-native.resources :as resources]
-            [status-im.utils.datetime :as datetime]
+            [utils.datetime :as datetime]
             [status-im.utils.handlers :refer [>evt]]))
 
 ;; TODO: update with real data

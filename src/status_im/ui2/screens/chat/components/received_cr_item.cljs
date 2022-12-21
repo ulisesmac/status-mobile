@@ -5,8 +5,8 @@
             [quo2.foundations.colors :as colors]
             [quo2.foundations.typography :as typography]
             [react-native.core :as rn]
-            [status-im.i18n.i18n :as i18n]
-            [status-im.utils.datetime :as time]
+            [i18n.i18n :as i18n]
+            [utils.datetime :as datetime]
             [status-im.utils.handlers :refer [<sub >evt]]
             [status-im.utils.utils :as utils.utils]))
 
@@ -47,7 +47,7 @@
                        typography/label
                        {:color      (colors/theme-colors colors/neutral-50 colors/neutral-40)
                         :margin-top 4})}
-        (time/to-short-str timestamp)]]
+        (datetime/to-short-str timestamp)]]
       [rn/view
        {:style {:border-radius      12
                 :margin-top         10
