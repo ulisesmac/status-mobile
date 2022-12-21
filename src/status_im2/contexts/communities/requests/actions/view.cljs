@@ -10,7 +10,7 @@
             [status-im.communities.core :as communities]
             [status-im.i18n.i18n :as i18n]
             [status-im.react-native.resources :as resources]
-            [status-im.ui.components.list.views :as list]
+            [status-im.utils.datetime :as datetime]
             [status-im.utils.handlers :refer [>evt]]))
 
 ;; TODO: update with real data
@@ -38,18 +38,15 @@
     :title   "No offensive names and profile pictures"
     :content "You will be asked to change your name or picture if the staff deems them inappropriate."}])
 
-<<<<<<< HEAD
+(def request-to-join-text
+  (memoize
+   (fn [is-open?]
+     (if is-open?
+       (i18n/label :t/join-open-community)
+       (i18n/label :t/request-to-join)))))
+
 (defn community-rule-item
   [{:keys [title content index]}]
-=======
-(def request-to-join-text (memoize
-                           (fn [is-open?]
-                             (if is-open?
-                               (i18n/label :t/join-open-community)
-                               (i18n/label :t/request-to-join)))))
-
-(defn community-rule-item [{:keys [title content index]}]
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
   [rn/view
    {:style {:flex 1 :margin-top 16}}
    [rn/view
@@ -91,32 +88,35 @@
 
 (defn community-rules-list
   [rules]
-  [list/flat-list
+  [rn/flat-list
    {:shows-horizontal-scroll-indicator false
     :data                              rules
     :separator                         [rn/view {:margin-top 1}]
     :render-fn                         community-rule-item}])
 
-<<<<<<< HEAD
+(def request-cooldown-ms (* 24 60 60 1000))
+
+(defn can-request-access-again?
+  [requested-at]
+  (> (datetime/timestamp) (+ (* requested-at 1000) request-cooldown-ms)))
+
 (defn request-to-join
-  [community]
-  (let [agreed-to-rules? (reagent/atom false)]
-=======
-(defn request-to-join [{:keys [permissions name id]}]
+  [{:keys [permissions name id joined
+           can-join? can-request-access?
+           requested-to-join-at]}]
   (let [agreed-to-rules? (reagent/atom false)
-        is-open? (not= 3 (:access permissions))]
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
+        is-open?         (not= 3 (:access permissions))]
+    (js/console.log "ca " can-join? can-request-access?)
     (fn []
       [rn/scroll-view {:style {:margin-left 20 :margin-right 20 :margin-bottom 20}}
        [rn/view
         {:style {:flex 1 :flex-direction :row :align-items :center :justify-content :space-between}}
 
-<<<<<<< HEAD
         [text/text
          {:accessibility-label :communities-join-community
           :weight              :semi-bold
           :size                :heading-1}
-         (i18n/label :t/join-open-community)]
+         (request-to-join-text is-open?)]
         [rn/view
          {:style {:height           32
                   :width            32
@@ -128,42 +128,17 @@
                   :display          :flex
                   :justify-content  :center}}
          [icon/icon :i/info]]]
-=======
-        [text/text {:accessibility-label :communities-join-community
-                    :weight              :semi-bold
-                    :size                :heading-1}
-         (request-to-join-text is-open?)]
-        [rn/view {:style {:height 32
-                          :width 32
-                          :align-items :center
-                          :background-color colors/white
-                          :border-color colors/neutral-20
-                          :border-width 1
-                          :border-radius 8
-                          :display :flex
-                          :justify-content :center}}
-         [icon/icon  :i/info]]]
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
        ;; TODO get tag image from community data
        [context-tags/context-tag
         {:style
          {:margin-right :auto
-<<<<<<< HEAD
           :margin-top   8}}
-        (resources/get-image :status-logo) (:name community)]
+        (resources/get-image :status-logo) name]
        [text/text
         {:style               {:margin-top 24}
          :accessibility-label :communities-rules-title
          :weight              :semi-bold
          :size                :paragraph-1}
-=======
-          :margin-top 8}}
-        (resources/get-image :status-logo) name]
-       [text/text {:style {:margin-top 24}
-                   :accessibility-label :communities-rules-title
-                   :weight              :semi-bold
-                   :size                :paragraph-1}
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
         (i18n/label :t/community-rules)]
        [community-rules-list community-rules]
 
@@ -172,7 +147,6 @@
          :on-change       #(swap! agreed-to-rules? not)}
         (i18n/label :t/accept-community-rules)]
 
-<<<<<<< HEAD
        [rn/view
         {:style {:width           "100%"
                  :margin-top      32
@@ -184,26 +158,20 @@
         [button/button
          {:on-press #(>evt [:bottom-sheet/hide])
           :type     :grey
-          :style    {:flex 1 :margin-right 12}} (i18n/label :t/cancel)]
-=======
-       [rn/view {:style {:width "100%"
-                         :margin-top 32 :margin-bottom 16
-                         :flex 1
-                         :flex-direction :row
-                         :align-items :center
-                         :justify-content :space-evenly}}
-        [button/button {:on-press #(>evt [:bottom-sheet/hide])
-                        :type     :grey
-                        :style    {:flex         1
-                                   :margin-right 12}} (i18n/label :t/cancel)]
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
+          :style    {:flex         1
+                     :margin-right 12}} (i18n/label :t/cancel)]
         [button/button
          {:on-press (fn []
-                      (>evt [::communities/join id])
+                      (when-not joined
+                        (when can-join?
+                          (>evt [::communities/join id]))
+
+                        (when
+                          can-request-access?
+                          (and can-request-access?
+                               (zero? requested-to-join-at)
+                               (can-request-access-again? requested-to-join-at))
+                          (>evt [::communities/request-to-join id])))
                       (>evt [:bottom-sheet/hide]))
-<<<<<<< HEAD
           :disabled (not @agreed-to-rules?)
-          :style    {:flex 1}} (i18n/label :t/join-open-community)]]])))
-=======
-          :disabled  (not @agreed-to-rules?) :style {:flex 1}} (request-to-join-text is-open?)]]])))
->>>>>>> 7c58bd420 (chore: add text for closed community overview page)
+          :style    {:flex 1}} (request-to-join-text is-open?)]]])))
