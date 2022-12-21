@@ -106,7 +106,6 @@
            requested-to-join-at]}]
   (let [agreed-to-rules? (reagent/atom false)
         is-open?         (not= 3 (:access permissions))]
-    (js/console.log "ca " can-join? can-request-access?)
     (fn []
       [rn/scroll-view {:style {:margin-left 20 :margin-right 20 :margin-bottom 20}}
        [rn/view
@@ -143,8 +142,9 @@
        [community-rules-list community-rules]
 
        [disclaimer/disclaimer
-        {:container-style {:margin-top 20}
-         :on-change       #(swap! agreed-to-rules? not)}
+        {:accessibility-label :rules-disclaimer-checkbox
+         :container-style     {:margin-top 20}
+         :on-change           #(swap! agreed-to-rules? not)}
         (i18n/label :t/accept-community-rules)]
 
        [rn/view
@@ -156,22 +156,24 @@
                  :align-items     :center
                  :justify-content :space-evenly}}
         [button/button
-         {:on-press #(>evt [:bottom-sheet/hide])
-          :type     :grey
-          :style    {:flex         1
-                     :margin-right 12}} (i18n/label :t/cancel)]
+         {:accessibility-label :cancel
+          :on-press            #(>evt [:bottom-sheet/hide])
+          :type                :grey
+          :style               {:flex         1
+                                :margin-right 12}} (i18n/label :t/cancel)]
         [button/button
-         {:on-press (fn []
-                      (when-not joined
-                        (when can-join?
-                          (>evt [::communities/join id]))
+         {:accessibility-label :join-community-button
+          :on-press            (fn []
+                                 (when-not joined
+                                   (when can-join?
+                                     (>evt [::communities/join id]))
 
-                        (when
-                          can-request-access?
-                          (and can-request-access?
-                               (zero? requested-to-join-at)
-                               (can-request-access-again? requested-to-join-at))
-                          (>evt [::communities/request-to-join id])))
-                      (>evt [:bottom-sheet/hide]))
-          :disabled (not @agreed-to-rules?)
-          :style    {:flex 1}} (request-to-join-text is-open?)]]])))
+                                   (when
+                                     can-request-access?
+                                     (and can-request-access?
+                                          (zero? requested-to-join-at)
+                                          (can-request-access-again? requested-to-join-at))
+                                     (>evt [::communities/request-to-join id])))
+                                 (>evt [:bottom-sheet/hide]))
+          :disabled            (not @agreed-to-rules?)
+          :style               {:flex 1}} (request-to-join-text is-open?)]]])))
