@@ -27,9 +27,6 @@
           (merge mobile-network-settings/offline-sheet)
 
           (= view :add-new)
-          (merge home.sheet/add-new)
-
-          (= view :add-new-sheet-view)
           (merge home.sheet/add-new-sheet)
 
           (= view :start-a-new-chat)
