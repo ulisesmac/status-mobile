@@ -1,7 +1,7 @@
 (ns status-im.pairing.core
   (:require [re-frame.core :as re-frame]
             [status-im.ethereum.json-rpc :as json-rpc]
-            [status-im.i18n.i18n :as i18n]
+            [i18n.i18n :as i18n]
             [status-im.multiaccounts.update.core :as multiaccounts.update]
             [status-im.utils.config :as config]
             [status-im.utils.fx :as fx]

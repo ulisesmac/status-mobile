@@ -8,7 +8,7 @@
             [status-im.chat.models :as chat.models]
             [status-im.ethereum.decode :as decode]
             [status-im.ethereum.tokens :as tokens]
-            [status-im.i18n.i18n :as i18n]
+            [i18n.i18n :as i18n]
             [status-im.notifications.android :as pn-android]
             [status-im.utils.fx :as fx]
             [status-im.utils.money :as money]

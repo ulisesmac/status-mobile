@@ -7,7 +7,7 @@
             [status-im.ethereum.eip55 :as eip55]
             [status-im.ethereum.json-rpc :as json-rpc]
             [status-im.ethereum.tokens :as tokens]
-            [status-im.i18n.i18n :as i18n]
+            [i18n.i18n :as i18n]
             [status-im.keycard.card :as keycard.card]
             [status-im.keycard.common :as keycard.common]
             [status-im.native-module.core :as status]

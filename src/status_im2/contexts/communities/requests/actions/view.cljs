@@ -8,7 +8,7 @@
             [quo2.foundations.colors :as colors]
             [reagent.core :as reagent]
             [status-im.communities.core :as communities]
-            [status-im.i18n.i18n :as i18n]
+            [i18n.i18n :as i18n]
             [status-im.react-native.resources :as resources]
             [utils.datetime :as datetime]
             [status-im.utils.handlers :refer [>evt]]))

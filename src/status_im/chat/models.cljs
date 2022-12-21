@@ -9,7 +9,7 @@
             [status-im.data-store.chats :as chats-store]
             [status-im.data-store.contacts :as contacts-store]
             [status-im.ethereum.json-rpc :as json-rpc]
-            [status-im.i18n.i18n :as i18n]
+            [i18n.i18n :as i18n]
             [status-im.mailserver.core :as mailserver]
             [status-im.multiaccounts.model :as multiaccounts.model]
             [status-im.ui.screens.chat.state :as chat.state]
