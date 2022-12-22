@@ -4,7 +4,6 @@
             [cljs-time.format :as t.format]
             [clojure.string :as string]
             [i18n.i18n :as i18n]
-            [re-frame.core :as re-frame]
             [status-im.goog.i18n :as goog.18n]
             [status-im.native-module.core :as status]))
 
@@ -80,7 +79,7 @@
     (fn []
       (or @formatter
           (reset! formatter
-                  (goog.18n/mk-fmt i18n/locale format))))))
+            (goog.18n/mk-fmt i18n/locale format))))))
 
 (def date-time-fmt (get-formatter-fn medium-date-time-format))
 (def date-fmt (get-formatter-fn medium-date-format))
@@ -247,11 +246,6 @@
 (defn timestamp->year-month-day-date
   [ms]
   (t.format/unparse (:year-month-day t.format/formatters) (to-date ms)))
-
-(re-frame/reg-cofx
- :now
- (fn [coeffects _]
-   (assoc coeffects :now (timestamp))))
 
 (defn to-ms
   [sec]
