@@ -167,13 +167,11 @@
                                  (when-not joined
                                    (when can-join?
                                      (>evt [::communities/join id]))
-
                                    (when
-                                     can-request-access?
                                      (and can-request-access?
                                           (zero? requested-to-join-at)
                                           (can-request-access-again? requested-to-join-at))
-                                     (>evt [::communities/request-to-join id])))
-                                 (>evt [:bottom-sheet/hide]))
+                                     (>evt [::communities/request-to-join id]))
+                                   (>evt [:bottom-sheet/hide])))
           :disabled            (not @agreed-to-rules?)
           :style               {:flex 1}} (request-to-join-text is-open?)]]])))
