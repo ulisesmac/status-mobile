@@ -106,6 +106,8 @@
            requested-to-join-at]}]
   (let [agreed-to-rules? (reagent/atom false)
         is-open?         (not= 3 (:access permissions))]
+    (js/console.log (not (pos? requested-to-join-at))
+                    (can-request-access-again? requested-to-join-at))
     (fn []
       [rn/scroll-view {:style {:margin-left 20 :margin-right 20 :margin-bottom 20}}
        [rn/view
@@ -167,11 +169,14 @@
                                  (when-not joined
                                    (when can-join?
                                      (>evt [::communities/join id]))
+                                   (>evt [:bottom-sheet/hide])
                                    (when
                                      (and can-request-access?
-                                          (zero? requested-to-join-at)
+                                          (not (pos? requested-to-join-at))
                                           (can-request-access-again? requested-to-join-at))
-                                     (>evt [::communities/request-to-join id]))
-                                   (>evt [:bottom-sheet/hide])))
+                                     (>evt [::communities/request-to-join id])
+                                     (>evt [:bottom-sheet/hide])
+                                   )
+                                 ))
           :disabled            (not @agreed-to-rules?)
           :style               {:flex 1}} (request-to-join-text is-open?)]]])))
