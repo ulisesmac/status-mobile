@@ -9,7 +9,9 @@
             [react-native.core :as rn]
             [react-native.reanimated :as reanimated]
             [reagent.core :as reagent]
-            [status-im.utils.utils :as utils]))
+            [status-im.utils.utils :as utils]
+            [quo2.core :as quo2]
+            [goog.string :as gstring]))
 
 (def ^:private scale-to-each 1.8)
 (def ^:private scale-to-total 2.6)
@@ -18,6 +20,7 @@
 (def ^:private opacity-from-default 0.5)
 (def ^:private signal-anim-duration 3900)
 (def ^:private signal-anim-duration-2 1950)
+(def ^:private max-audio-duration-ms 120000)
 
 (def ^:private animated-ring
   (reagent/adapt-react-class
@@ -602,6 +605,29 @@
           :accessibility-label :mic-button}
          [icons/icon :i/audio {:color (colors/theme-colors colors/neutral-100 colors/white)}]]]))])
 
+(defn- soundtrack
+  [recording-length-ms ready-to-delete?]
+  [:f>
+   (fn []
+     (let [fill-percentage (/ (* recording-length-ms 100) max-audio-duration-ms)]
+       [rn/view {:style (style/soundtrack-container)}
+        [rn/view {:style (style/soundtrack-bar fill-percentage ready-to-delete?)}]]))])
+
+(defn- time-counter
+  [recording-length-ms ready-to-delete?]
+  [:f>
+   (fn []
+     (let [s (quot recording-length-ms 1000)
+           time-str (gstring/format "%d:%02d" (quot s 60) (mod s 60))]
+       [rn/view {:style style/timer-container}
+        [rn/view {:style (style/timer-circle)}]
+        [quo2/text (merge
+                    {:size   :label
+                     :weight :semi-bold}
+                    (when ready-to-delete?
+                      {:style (style/timer-text)}))
+         time-str]]))])
+
 (defn input-view
   []
   [:f>
@@ -617,7 +643,7 @@
            record-button-is-animating?        (atom false)
            touch-active?                      (atom false)
            recording-timer                    (atom nil)
-           recording-length-ms                (atom 0)
+           recording-length-ms                (reagent/atom 0)
            on-start-should-set-responder
            (fn [^js e]
              (when-not @locked?
@@ -743,25 +769,31 @@
              (reset! touch-active? false))]
        (fn []
          [rn/view
-          {:style                         style/input-container
-           :pointer-events                :box-only
-           :on-start-should-set-responder on-start-should-set-responder
-           :on-responder-move             on-responder-move
-           :on-responder-release          on-responder-release}
-          [delete-button recording? ready-to-delete?]
-          [lock-button recording? ready-to-lock? locked?]
-          [send-button recording? ready-to-send? reviewing-audio?]
-          [record-button-big
-           recording?
-           ready-to-send?
-           ready-to-lock?
-           ready-to-delete?
-           record-button-is-animating?
-           record-button-at-initial-position?
-           locked?
-           reviewing-audio?
-           recording-timer
-           recording-length-ms
-           clear-timeout
-           touch-active?]
-          [record-button recording? reviewing-audio?]])))])
+          {:style style/bar-container}
+          (when @recording?
+            [:<>
+             [time-counter @recording-length-ms @ready-to-delete?]
+             [soundtrack @recording-length-ms @ready-to-delete?]])
+          [rn/view
+           {:style                         style/button-container
+            :pointer-events                :box-only
+            :on-start-should-set-responder on-start-should-set-responder
+            :on-responder-move             on-responder-move
+            :on-responder-release          on-responder-release}
+           [delete-button recording? ready-to-delete?]
+           [lock-button recording? ready-to-lock? locked?]
+           [send-button recording? ready-to-send? reviewing-audio?]
+           [record-button-big
+            recording?
+            ready-to-send?
+            ready-to-lock?
+            ready-to-delete?
+            record-button-is-animating?
+            record-button-at-initial-position?
+            locked?
+            reviewing-audio?
+            recording-timer
+            recording-length-ms
+            clear-timeout
+            touch-active?]
+           [record-button recording? reviewing-audio?]]])))])

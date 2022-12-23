@@ -221,8 +221,48 @@
    {:margin-bottom 32
     :margin-right  32}))
 
-(def input-container
+(def button-container
   {:width           140
    :height          140
    :align-items     :flex-end
-   :justify-content :flex-end})
+   :justify-content :flex-end
+   :position        :absolute
+   :right           -10})
+
+(def bar-container
+  {:width  "100%"
+   :height 128})
+
+(defn soundtrack-container []
+  {:height           4
+   :border-radius    2
+   :background-color (colors/theme-colors colors/neutral-20 colors/neutral-80)
+   :overflow         :hidden
+   :position         :absolute
+   :left             67
+   :right            150
+   :bottom           34})
+
+(defn soundtrack-bar [fill-percentage ready-to-delete?]
+  {:width            (str fill-percentage "%")
+   :height           "100%"
+   :background-color (if ready-to-delete?
+                       (colors/theme-colors colors/danger-50 colors/danger-60)
+                       (colors/theme-colors colors/primary-50 colors/primary-60))})
+
+(def timer-container
+  {:position       :absolute
+   :left           20
+   :bottom         28.5
+   :flex-direction :row
+   :align-items    :center})
+
+(defn timer-circle []
+  {:width            8
+   :height           8
+   :border-radius    4
+   :margin-right     6
+   :background-color (colors/theme-colors colors/danger-50 colors/danger-60)})
+
+(defn timer-text []
+  {:color (colors/theme-colors colors/danger-50 colors/danger-60)})
