@@ -101,21 +101,6 @@
                                     :on-success #(re-frame/dispatch
                                                   [::mark-all-read-in-community-successful %])}]}))
 
-(defn find-albums [messages]
-  (let [albums-count (atom {})
-        new-messages (atom {})]
-    (doseq [message messages]
-      (let [album-id (:album-id (:content (val message)))]
-        (println "ALBUMID" album-id (get @albums-count album-id))
-        (when album-id
-          (if (get @albums-count album-id)
-            (swap! albums-count assoc-in [album-id] (inc (get @albums-count album-id)))
-            (swap! albums-count assoc-in [album-id] 1)))
-        (when (> (get @albums-count album-id) 3)
-          (println "COMPLETED AN ALBUMXXXX" (get @albums-count album-id))
-          ))))
-  messages)
-
 (fx/defn messages-loaded
   "Loads more messages for current chat"
   {:events [::messages-loaded]}
@@ -145,7 +130,8 @@
                   messages)
           current-clock-value (get-in db [:pagination-info chat-id :cursor-clock-value])
           clock-value (when cursor (cursor->clock-value cursor))
-          result (find-albums all-messages)]
+          ;all-messages (find-albums all-messages)
+          ]
       {:dispatch [:chat/add-senders-to-chat-users (vals senders)]
        :db       (-> db
                      (update-in [:pagination-info chat-id :cursor-clock-value]
