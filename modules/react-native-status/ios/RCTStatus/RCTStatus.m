@@ -342,7 +342,8 @@ RCT_EXPORT_METHOD(inputConnectionStringForBootstrapping:(NSString *)cs
 RCT_EXPORT_METHOD(multiformatDeserializePublicKey:(NSString *)multiCodecKey
                   base58btc:(NSString *)base58btc
                   callback:(RCTResponseSenderBlock)callback) {
-
+            // we may or maynot have to use StatusgoDecompressPublicKey instead of StatusgoMultiformatDeserializePublicKey
+            // we will soon find out
     NSString *result = StatusgoMultiformatDeserializePublicKey(multiCodecKey,base58btc);
     callback(@[result]);
 }
@@ -350,8 +351,9 @@ RCT_EXPORT_METHOD(multiformatDeserializePublicKey:(NSString *)multiCodecKey
 RCT_EXPORT_METHOD(multiformatSerializePublicKey:(NSString *)multiCodecKey
                   base58btc:(NSString *)base58btc
                   callback:(RCTResponseSenderBlock)callback) {
-
-    NSString *result = StatusgoMultiformatS1erializePublicKey(multiCodecKey,base58btc);
+            // we may or maynot have to use StatusgoCompressPublicKey instead of StatusgoMultiformatSerializePublicKey
+            // we will soon find out
+    NSString *result = StatusgoMultiformatSerializePublicKey(multiCodecKey,base58btc);
     callback(@[result]);
 }
 

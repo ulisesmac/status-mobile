@@ -278,6 +278,8 @@
              :connection-string connection-string})
   (.inputConnectionStringForBootstrapping ^js (status) connection-string config-json callback))
 
+
+;;todo : siddarthkay write a util that checks if the input public-key is valid before we do any processing
 (defn serialise-public-key-into-compressed-key
   "Provides public key to status-go and gets back a compressed key"
   [public-key callback]
@@ -286,11 +288,15 @@
   ;;var multiCodecKey = publicKey
   ;;multiCodecKey.removePrefix("0x")
   ;;multiCodecKey.insert(secp256k1Code)
+  ;; todo : siddarthkay move base58btc to a constants file and add a docstring
+  (let [base58btc "z"
+        multi-code-key (str "0xe701" (subs public-key 2))]
   (log/info "[native-module] Compressing public key"
             {:fn         :serialise-public-key-into-compressed-key
              :public-key public-key})
-  (.multiformatSerializePublicKey ^js (status) public-key "z" callback))
+  (.multiformatSerializePublicKey ^js (status) multi-code-key base58btc callback)))
 
+;;todo : siddarthkay write a util that checks if the input compressed-key is valid before we do any processing
 (defn deserialise-compressed-key-into-public-key
   "Provides compressed key to status-go and gets back the uncompressed public key"
   [public-key callback]

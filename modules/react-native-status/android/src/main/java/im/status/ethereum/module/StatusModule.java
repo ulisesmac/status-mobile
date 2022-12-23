@@ -995,6 +995,8 @@ class StatusModule extends ReactContextBaseJavaModule implements LifecycleEventL
         Runnable runnableTask = new Runnable() {
             @Override
             public void run() {
+            // we may or maynot have to use compressPublicKey instead of multiformatSerializePublicKey
+            // we will soon find out
                 String res = Statusgo.multiformatSerializePublicKey(multiCodecKey,base58btc);
                 callback.invoke(res);
             }
@@ -1013,6 +1015,8 @@ class StatusModule extends ReactContextBaseJavaModule implements LifecycleEventL
         Runnable runnableTask = new Runnable() {
             @Override
             public void run() {
+            // we may or maynot have to use decompressPublicKey instead of multiformatDeserializePublicKey
+            // we will soon find out
                 String res = Statusgo.multiformatDeserializePublicKey(multiCodecKey,base58btc);
                 callback.invoke(res);
             }
