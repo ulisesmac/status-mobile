@@ -180,6 +180,6 @@
               {:on-press #(rf/dispatch [:shell/navigate-to-jump-to])
                :label    (i18n/label :t/jump-to)}}
              (when @show-floating-scroll-down-button
-               {:bottom {:on-press scroll-to-bottom}}))
+               {:scroll-to-bottom {:on-press scroll-to-bottom}}))
       {:position :absolute
        :bottom   12}]]))
