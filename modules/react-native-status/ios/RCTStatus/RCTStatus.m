@@ -339,6 +339,22 @@ RCT_EXPORT_METHOD(inputConnectionStringForBootstrapping:(NSString *)cs
     callback(@[result]);
 }
 
+RCT_EXPORT_METHOD(multiformatDeserializePublicKey:(NSString *)multiCodecKey
+                  base58btc:(NSString *)base58btc
+                  callback:(RCTResponseSenderBlock)callback) {
+
+    NSString *result = StatusgoMultiformatDeserializePublicKey(multiCodecKey,base58btc);
+    callback(@[result]);
+}
+
+RCT_EXPORT_METHOD(multiformatSerializePublicKey:(NSString *)multiCodecKey
+                  base58btc:(NSString *)base58btc
+                  callback:(RCTResponseSenderBlock)callback) {
+
+    NSString *result = StatusgoMultiformatS1erializePublicKey(multiCodecKey,base58btc);
+    callback(@[result]);
+}
+
 RCT_EXPORT_METHOD(hashTypedData:(NSString *)data
                   callback:(RCTResponseSenderBlock)callback) {
 #if DEBUG

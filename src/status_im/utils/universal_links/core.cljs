@@ -73,6 +73,7 @@
   (log/info "universal-links: handling community request  " community-id)
   (navigation/navigate-to-cofx cofx :community-requests-to-join {:community-id community-id}))
 
+;; siddarthkay : we may have to handle compressed keys here
 (fx/defn handle-community
   [cofx {:keys [community-id]}]
   (log/info "universal-links: handling community" community-id)

@@ -985,6 +985,41 @@ class StatusModule extends ReactContextBaseJavaModule implements LifecycleEventL
         StatusThreadPoolExecutor.getInstance().execute(runnableTask);
     }
 
+    @ReactMethod
+    public void multiformatSerializePublicKey(final String multiCodecKey, final String base58btc) throws JSONException {
+        if (!checkAvailability()) {
+            callback.invoke(false);
+            return;
+        }
+
+        Runnable runnableTask = new Runnable() {
+            @Override
+            public void run() {
+                String res = Statusgo.multiformatSerializePublicKey(multiCodecKey,base58btc);
+                callback.invoke(res);
+            }
+        };
+
+        StatusThreadPoolExecutor.getInstance().execute(runnableTask);
+    }
+
+    @ReactMethod
+    public void multiformatDeserializePublicKey(final String multiCodecKey, final String base58btc) throws JSONException {
+        if (!checkAvailability()) {
+            callback.invoke(false);
+            return;
+        }
+
+        Runnable runnableTask = new Runnable() {
+            @Override
+            public void run() {
+                String res = Statusgo.multiformatDeserializePublicKey(multiCodecKey,base58btc);
+                callback.invoke(res);
+            }
+        };
+
+        StatusThreadPoolExecutor.getInstance().execute(runnableTask);
+    }
 
     @ReactMethod
     public void hashTypedData(final String data, final Callback callback) {

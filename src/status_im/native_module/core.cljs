@@ -278,6 +278,27 @@
              :connection-string connection-string})
   (.inputConnectionStringForBootstrapping ^js (status) connection-string config-json callback))
 
+(defn serialise-public-key-into-compressed-key
+  "Provides public key to status-go and gets back a compressed key"
+  [public-key callback]
+  ;;let secp256k1Code = "0xe701"
+  ;;let base58btc = "z"
+  ;;var multiCodecKey = publicKey
+  ;;multiCodecKey.removePrefix("0x")
+  ;;multiCodecKey.insert(secp256k1Code)
+  (log/info "[native-module] Compressing public key"
+            {:fn         :serialise-public-key-into-compressed-key
+             :public-key public-key})
+  (.multiformatSerializePublicKey ^js (status) public-key "z" callback))
+
+(defn deserialise-compressed-key-into-public-key
+  "Provides compressed key to status-go and gets back the uncompressed public key"
+  [public-key callback]
+  (log/info "[native-module] Deserialising compressed key"
+            {:fn         :deserialise-compressed-key-into-public-key
+             :public-key public-key})
+  (.multiformatDeserializePublicKey ^js (status) public-key "f" callback))
+
 (defn hash-typed-data
   "used for keycard"
   [data callback]
