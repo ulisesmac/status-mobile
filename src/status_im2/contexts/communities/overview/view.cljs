@@ -11,7 +11,9 @@
             [status-im.utils.utils :as utils]
             [status-im2.common.constants :as constants]
             [status-im2.common.scroll-page.view :as scroll-page]
-            [status-im2.contexts.communities.home.actions.view :as home.actions]
+            [status-im2.contexts.communities.home.actions.view :as home.actions] 
+            [status-im2.contexts.communities.context-drawers.community-options.view :as options]
+
             [status-im2.contexts.communities.overview.style :as style] ;; TODO move to status-im2 when
                                                                        ;; reimplemented
             [status-im2.contexts.communities.requests.actions.view :as requests.actions]
@@ -300,7 +302,7 @@
          :chevron-position :left}]])))
 
 (defn community-card-page-view
-  [{:keys [name cover] :as community}]
+  [{:keys [name cover id] :as community}]
   (let [channel-heights      (reagent/atom [])
         first-channel-height (reagent/atom 0)
         scroll-component     (scroll-page/scroll-page
@@ -310,13 +312,9 @@
                                                         :background-color (scroll-page/icon-color)}
                                                        {:icon             :i/options
                                                         :background-color (scroll-page/icon-color)
-                                                        :on-press         #(rf/dispatch
-                                                                            [:bottom-sheet/show-sheet
-                                                                             {:content
-                                                                              (fn []
-                                                                                [home.actions/actions
-                                                                                 community])
-                                                                              :content-height 400}])}]}
+                                                        :on-press         #(rf/dispatch  [:bottom-sheet/show-sheet
+                                                                                          {:content (fn []
+                                                                                                      [options/community-options-bottom-sheet id])}])}]}
                               name)]
     (fn []
       (let [page-component (memoize (render-page-content community channel-heights first-channel-height))
