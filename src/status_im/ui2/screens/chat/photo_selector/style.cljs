@@ -7,7 +7,7 @@
   {:width    "100%"
    :height   (+ (:bottom safe-area) 65)
    :position :absolute
-   :bottom   (if platform/ios? 0 80)})
+   :bottom   (if platform/ios? 0 65)})
 
 (defn buttons-container
   [safe-area]
@@ -62,8 +62,7 @@
    :height           (/ window-width 3)
    :background-color (colors/theme-colors colors/white-opa-40 colors/neutral-80-opa-40)})
 
-(defn image-count
-  []
+(def image-count
   {:width         24
    :height        24
    :border-radius 8
