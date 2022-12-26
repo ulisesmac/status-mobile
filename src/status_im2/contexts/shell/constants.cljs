@@ -23,7 +23,7 @@
   []
   (let [{:keys [width height]} (rf/sub [:dimensions/window])]
     {:width  width
-     :height (if (> (status-bar-offset) 30)
+     :height (if (> (status-bar-offset) 24)
                (+ height (status-bar-offset))
                height)}))
 
