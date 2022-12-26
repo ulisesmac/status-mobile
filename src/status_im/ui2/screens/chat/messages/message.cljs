@@ -30,7 +30,12 @@
             [status-im2.contexts.chat.messages.delete-message-for-me.events]
             [status-im2.contexts.chat.messages.delete-message.events]
             [utils.re-frame :as rf]
+<<<<<<< HEAD
             [quo2.core :as quo])
+=======
+            [utils.security.core :as security]
+            [status-im2.contexts.chat.messages.album.view :as album])
+>>>>>>> b640f2420... feat: images album
   (:require-macros [status-im.utils.views :refer [defview letsubs]]))
 
 (def edited-at-text (str " ⌫ " (i18n/label :t/edited)))
@@ -432,11 +437,9 @@
      reaction-picker]))
 
 (defmethod ->message constants/content-type-album
-  [{:keys [album-id] :as message}
-   {:keys [on-long-press modal ref] :as reaction-picker}]
-  (println "MAMA" (get message album-id))
-  [rn/view
-   [rn/text "FUCKING ALBUM!!!!"]])
+  [message reaction-picker]
+  [message-content-wrapper message
+   [album/album-message message reaction-picker]])
 
 (defmethod ->message constants/content-type-image
   [{:keys [content in-popover? outgoing] :as message}
