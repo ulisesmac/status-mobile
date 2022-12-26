@@ -114,7 +114,6 @@
     [rn/view {:style (when platform/android? {:scaleY -1})}
      [chat.group/group-chat-footer chat-id invitation-admin]]))
 
-
 (defn render-fn [{:keys [type value deleted? deleted-for-me? content-type] :as message-data} _ _ context]
   [rn/view {:style (when platform/android? {:scaleY -1})}
    (if (= type :datemark)
