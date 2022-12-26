@@ -17,3 +17,5 @@
    :width           20
    :justify-content :center
    :align-items     :center})
+
+(def text {:margin-left 10 :margin-right 50})
