@@ -262,7 +262,7 @@
   (views/letsubs [logging-in? [:multiaccounts/login]]
     [components.plus-button/plus-button-old
      {:on-press            (when-not logging-in?
-                             #(re-frame/dispatch [:bottom-sheet/show-sheet :add-new {}]))
+                             #(re-frame/dispatch [:bottom-sheet/show-sheet :start-a-new-chat {}]))
       :loading             logging-in?
       :accessibility-label :new-chat-button}]))
 
@@ -271,7 +271,7 @@
   (views/letsubs [logging-in? [:multiaccounts/login]]
     [components.plus-button/plus-button-old
      {:on-press            (when-not logging-in?
-                             #(re-frame/dispatch [:bottom-sheet/show-sheet :add-new {}]))
+                             #(re-frame/dispatch [:bottom-sheet/show-sheet :start-a-new-chat {}]))
       :loading             logging-in?
       :accessibility-label :new-chat-button}]))
 
