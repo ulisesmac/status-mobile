@@ -2,10 +2,9 @@
   (:require [clojure.string :as string]
             [re-frame.core :as re-frame]
             [status-im.ethereum.core :as ethereum]
-            [status-im.ethereum.json-rpc :as json-rpc]
             [status-im.i18n.i18n :as i18n]
             [status-im.node.core :as node]
-            [status-im.utils.fx :as fx]
+            [utils.re-frame :as rf]
             [status-im.utils.http :as http]
             [status-im.utils.types :as types]
             [status-im2.navigation.events :as navigation]))
@@ -64,7 +63,7 @@
   [{:keys [db]} network-id]
   (get-in db [:networks/networks network-id]))
 
-(fx/defn set-input
+(rf/defn set-input
   {:events [::input-changed]}
   [{:keys [db]} input-key value]
   {:db (-> db
@@ -72,13 +71,13 @@
            (update-in [:networks/manage] validate-manage))})
 
 ;; No edit functionality actually implemented
-(fx/defn edit
+(rf/defn edit
   {:events [::add-network-pressed]}
   [{db :db}]
   {:db       (assoc db :networks/manage (validate-manage default-manage))
    :dispatch [:navigate-to :edit-network]})
 
-(fx/defn connect-success
+(rf/defn connect-success
   {:events [::connect-success]}
   [_ network-id]
   {:ui/show-confirmation
@@ -88,14 +87,14 @@
     :on-accept           #(re-frame/dispatch [::save-network-settings-pressed network-id])
     :on-cancel           nil}})
 
-(fx/defn connect-failure
+(rf/defn connect-failure
   {:events [::connect-failure]}
   [_ reason]
   {:utils/show-popup
    {:title   (i18n/label :t/error)
     :content (str reason)}})
 
-(fx/defn connect
+(rf/defn connect
   {:events [::connect-network-pressed]}
   [{:keys [db] :as cofx} network-id]
   (if-let [config (get-in db [:networks/networks network-id :config])]
@@ -125,7 +124,7 @@
       (connect-success cofx network-id))
     (connect-failure cofx "A network with the specified id doesn't exist")))
 
-(fx/defn delete
+(rf/defn delete
   {:events [::delete-network-pressed]}
   [{:keys [db]} network]
   (let [current-network? (= (:networks/current-network db) network)]
@@ -139,24 +138,24 @@
                                                                         network])
                               :on-cancel           nil}})))
 
-(fx/defn save-network-settings
+(rf/defn save-network-settings
   {:events [::save-network-settings-pressed]}
   [{:keys [db] :as cofx} network]
-  (fx/merge cofx
-            {:db             (assoc db :networks/current-network network)
-             ::json-rpc/call [{:method     "settings_saveSetting"
-                               :params     [:networks/current-network network]
-                               :on-success #()}]}
+  (rf/merge cofx
+            {:db            (assoc db :networks/current-network network)
+             :json-rpc/call [{:method     "settings_saveSetting"
+                              :params     [:networks/current-network network]
+                              :on-success #()}]}
             (node/prepare-new-config {:on-success #(re-frame/dispatch [:logout])})))
 
-(fx/defn remove-network
+(rf/defn remove-network
   {:events [::remove-network-confirmed]}
   [{:keys [db] :as cofx} network]
   (let [networks (dissoc (:networks/networks db) network)]
-    {:db             (assoc db :networks/networks networks)
-     ::json-rpc/call [{:method     "settings_saveSetting"
-                       :params     [:networks/networks (vals networks)]
-                       :on-success #(re-frame/dispatch [:navigate-back])}]}))
+    {:db            (assoc db :networks/networks networks)
+     :json-rpc/call [{:method     "settings_saveSetting"
+                      :params     [:networks/networks (vals networks)]
+                      :on-success #(re-frame/dispatch [:navigate-back])}]}))
 
 (defn new-network
   [random-id network-name symbol upstream-url chain-type chain-id]
@@ -171,7 +170,7 @@
      :symbol symbol
      :config config}))
 
-(fx/defn save
+(rf/defn save
   {:events       [::save-network-pressed]
    :interceptors [(re-frame/inject-cofx :random-id-generator)]}
   [{{:networks/keys [manage networks] :as db} :db
@@ -191,16 +190,16 @@
           new-networks                               (assoc networks random-id network)]
       (if (or (not custom-chain-type?)
               (chain-id-available? networks network))
-        {:db             (-> db
-                             (dissoc :networks/manage)
-                             (assoc :networks/networks new-networks))
-         ::json-rpc/call [{:method     "settings_saveSetting"
-                           :params     [:networks/networks (vals new-networks)]
-                           :on-success #(re-frame/dispatch [:navigate-back])}]}
+        {:db            (-> db
+                            (dissoc :networks/manage)
+                            (assoc :networks/networks new-networks))
+         :json-rpc/call [{:method     "settings_saveSetting"
+                          :params     [:networks/networks (vals new-networks)]
+                          :on-success #(re-frame/dispatch [:navigate-back])}]}
         {:ui/show-error "chain-id already defined"}))
     {:ui/show-error "invalid network parameters"}))
 
-(fx/defn open-network-details
+(rf/defn open-network-details
   {:events [::network-entry-pressed]}
   [cofx network]
   (navigation/navigate-to-cofx cofx :network-details {:networks/selected-network network}))

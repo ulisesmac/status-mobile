@@ -4,14 +4,13 @@
   (:require [clojure.string :as string]
             [re-frame.core :as re-frame]
             [status-im.constants :as constants]
-            [status-im.ethereum.json-rpc :as json-rpc]
             [status-im.network.core :as network]
             [status-im.ui.screens.browser.eip3085.sheet :as sheet]
-            [status-im.utils.fx :as fx]
+            [utils.re-frame :as rf]
             [status-im.utils.random :as random]
             [taoensso.timbre :as log]))
 
-(fx/defn send-success-call-to-bridge
+(rf/defn send-success-call-to-bridge
   {:events [:eip3085/send-success-call-to-bridge]}
   [_ id messageId]
   {:browser/send-to-bridge {:type      constants/web3-send-async-callback
@@ -20,18 +19,18 @@
                                         :id      (int id)
                                         :result  nil}}})
 
-(fx/defn allow-permission
+(rf/defn allow-permission
   {:events [:eip3085.ui/dapp-permission-allowed]}
   [{:keys [db] :as cofx} message-id {:keys [new-networks id]}]
-  {:db             (assoc db :networks/networks new-networks)
-   ::json-rpc/call [{:method     "settings_saveSetting"
-                     :params     [:networks/networks (vals new-networks)]
-                     :on-success #(re-frame/dispatch [:eip3085/send-success-call-to-bridge cofx id
-                                                      message-id])
-                     :on-error   #(log/error "failed to perform settings_saveSetting" %)}]
-   :dispatch       [:bottom-sheet/hide]})
+  {:db            (assoc db :networks/networks new-networks)
+   :json-rpc/call [{:method     "settings_saveSetting"
+                    :params     [:networks/networks (vals new-networks)]
+                    :on-success #(re-frame/dispatch [:eip3085/send-success-call-to-bridge cofx id
+                                                     message-id])
+                    :on-error   #(log/error "failed to perform settings_saveSetting" %)}]
+   :dispatch      [:bottom-sheet/hide]})
 
-(fx/defn deny-permission
+(rf/defn deny-permission
   {:events [:eip3085.ui/dapp-permission-denied]}
   [_ message-id _]
   {:browser/send-to-bridge {:type      constants/web3-send-async-callback
@@ -40,7 +39,7 @@
                                         :message "User rejected the request."}}
    :dispatch               [:bottom-sheet/hide]})
 
-(fx/defn handle-add-ethereum-chain
+(rf/defn handle-add-ethereum-chain
   {:events [:eip3085/handle-add-ethereum-chain]}
   [{{:networks/keys [networks] :as db} :db :as cofx}
    dapp-name id message-id

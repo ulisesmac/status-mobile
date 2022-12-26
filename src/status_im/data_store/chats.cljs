@@ -2,8 +2,7 @@
   (:require [clojure.set :as clojure.set]
             [status-im.constants :as constants]
             [status-im.data-store.messages :as messages]
-            [status-im.ethereum.json-rpc :as json-rpc]
-            [status-im.utils.fx :as fx]
+            [utils.re-frame :as rf]
             [status-im.utils.types :as types]
             [taoensso.timbre :as log]))
 
@@ -109,10 +108,10 @@
       rpc->type
       unmarshal-members))
 
-(fx/defn fetch-chats-rpc
+(rf/defn fetch-chats-rpc
   [_ {:keys [on-success]}]
-  {::json-rpc/call [{:method      "wakuext_chatsPreview"
-                     :params      []
-                     :js-response true
-                     :on-success  #(on-success ^js %)
-                     :on-error    #(log/error "failed to fetch chats" 0 -1 %)}]})
+  {:json-rpc/call [{:method      "wakuext_chatsPreview"
+                    :params      []
+                    :js-response true
+                    :on-success  #(on-success ^js %)
+                    :on-error    #(log/error "failed to fetch chats" 0 -1 %)}]})

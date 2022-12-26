@@ -15,16 +15,17 @@
 (defn indicator
   []
   [rn/view
-   {:position         :absolute
-    :z-index          1
-    :right            -2
-    :top              -2
-    :width            10
-    :height           10
-    :border-radius    5
-    :justify-content  :center
-    :align-items      :center
-    :background-color (colors/theme-colors colors/neutral-5 colors/neutral-95)}
+   {:accessibility-label :notification-dot
+    :style               {:position         :absolute
+                          :z-index          1
+                          :right            -2
+                          :top              -2
+                          :width            10
+                          :height           10
+                          :border-radius    5
+                          :justify-content  :center
+                          :align-items      :center
+                          :background-color (colors/theme-colors colors/neutral-5 colors/neutral-95)}}
    [notification-dot]])
 
 (defn tabs
@@ -138,6 +139,7 @@
             :shows-horizontal-scroll-indicator false
             :data                              data
             :key-fn                            (comp str :id)
+            :on-scroll-to-index-failed         identity
             :on-scroll                         (fn [^js e]
                                                  (when fade-end?
                                                    (let [offset-x       (oget
